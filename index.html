@@ -743,6 +743,21 @@ function Tips({tips, used, onUse}){
   );
 }
 
+// ─── Reveal (schrittweise Lösung) Component ─────────────────────────────────
+function Reveal({items, revealed, onReveal}){
+  // items = [{label:'1A',val:'zwei'}, ...] – each answer step
+  return e('div',{style:{marginTop:8}},
+    items.slice(0,revealed).map(function(it,i){
+      return e('div',{key:i,style:{padding:'6px 10px',marginBottom:4,borderRadius:8,background:'rgba(5,150,105,.06)',borderLeft:'3px solid var(--green)',color:'var(--text)',fontSize:'.8rem',lineHeight:'1.5',animation:'fadeUp .2s ease'}},
+        e('b',{style:{color:'var(--green)'}},it.label+': '),
+        e('span',null,it.val));
+    }),
+    revealed<items.length?e('button',{className:'btn btn-secondary',style:{fontSize:'.8rem',padding:'5px 12px',marginTop:4,borderColor:'var(--green)',color:'var(--green)'},onClick:onReveal},
+      '\ud83d\udd13 Lösung '+(revealed+1)+'/'+items.length
+    ):e('div',{style:{fontSize:'.75rem',color:'var(--green)',fontWeight:600,marginTop:4}},'\u2713 Alle Lösungen aufgedeckt')
+  );
+}
+
 // ─── Lückentext Component ────────────────────────────────────────────────────
 
 function LueckenText({parts, answers, checked, inputs, onChange}){
@@ -787,7 +802,9 @@ function parseBlanks(template, answersList){
 
 function Ex1({markDone}){
   const [tipsUsed, setTipsUsed] = useState(0);
+  const [revUsed, setRevUsed] = useState(0);
   const tips = ['Das Rechnungswesen hat zwei Hauptbereiche: einen externen und einen internen.','Die externe Seite erstellt Bilanz und Erfolgsrechnung, die interne erfasst die Kosten.','Nebenbuchhaltungen sind z.B. Lohn-, Debitoren- und Kreditorenbuchhaltung.'];
+  const revItems = [{label:'1',val:'zwei'},{label:'2',val:'finanzielle'},{label:'3',val:'Erfolgsrechnung'},{label:'4',val:'betriebliche'},{label:'5',val:'Kosten'},{label:'6',val:'Nebenbuchhaltungen'},{label:'7',val:'Lohnbuchhaltung'},{label:'8',val:'Debitorenbuchhaltung'},{label:'9',val:'Kreditorenbuchhaltung'},{label:'10',val:'wichtige Grundlage'},{label:'11',val:'Entscheidung'},{label:'12',val:'Führung'}];
   const blanksA = ['zwei','finanzielle','Erfolgsrechnung','betriebliche','Kosten'];
   const blanksB = ['Nebenbuchhaltungen','Lohnbuchhaltung','Debitorenbuchhaltung','Kreditorenbuchhaltung'];
   const blanksC = ['wichtige Grundlage','Entscheidung','Führung'];
@@ -813,7 +830,7 @@ function Ex1({markDone}){
     if(correct===12) markDone(1,100);
     else markDone(1, Math.round(correct/12*100));
   }
-  function reset(){setInputs(Array(12).fill(''));setChecked(false);setShowSol(false)}
+  function reset(){setInputs(Array(12).fill(''));setChecked(false);setShowSol(false);setRevUsed(0)}
 
   const partsA = parseBlanks(templateA, blanksA);
   const partsB = parseBlanks(templateB, blanksB);
@@ -830,7 +847,10 @@ function Ex1({markDone}){
     e(LueckenText,{parts:partsBOff,answers:allAnswers,checked,inputs,onChange}),
     e('div',{className:'section-title'},'C)'),
     e(LueckenText,{parts:partsCOff,answers:allAnswers,checked,inputs,onChange}),
-    e(Tips,{tips:tips,used:tipsUsed,onUse:function(){setTipsUsed(tipsUsed+1)}}),
+    e('div',{style:{display:'flex',gap:16,flexWrap:'wrap',alignItems:'flex-start'}},
+      e('div',{style:{flex:1,minWidth:200}}, e(Tips, {tips:tips, used:tipsUsed, onUse:function(){setTipsUsed(tipsUsed+1)}})),
+      e('div',{style:{flex:1,minWidth:200}}, e(Reveal, {items:revItems, revealed:revUsed, onReveal:function(){setRevUsed(revUsed+1)}}))
+    ),
     e('div',{className:'btn-row'},
       !checked?e('button',{className:'btn btn-primary',onClick:check},'Prüfen'):null,
       checked?e('button',{className:'btn btn-secondary',onClick:()=>setShowSol(!showSol)},showSol?'Lösung ausblenden':'Lösung anzeigen'):null,
@@ -905,7 +925,9 @@ function TrueFalseExercise({statements, exId, markDone}){
 
 function Ex2({markDone}){
   const [tipsUsed, setTipsUsed] = useState(0);
+  const [revUsed, setRevUsed] = useState(0);
   const tips = ['Rechnungswesen ist der Oberbegriff \u2013 Buchhaltung ist nur ein Teil davon.','Die Buchhaltung erfasst nur zahlenmässig messbare Geschäftsvorgänge.','Die Finanzbuchhaltung bildet die Basis für alle anderen Bereiche.'];
+  const revItems = [{label:'1',val:'Richtig'},{label:'2',val:'Falsch \u2013 RW umfasst mehr als nur Buchhaltung'},{label:'3',val:'Richtig'},{label:'4',val:'Richtig'},{label:'5',val:'Falsch \u2013 nur zahlenmässig erfassbare Vorgänge'},{label:'6',val:'Richtig'}];
   const statements = [
     {text:'Das Rechnungswesen ist im Unternehmen wichtige Grundlage für Planung, Entscheidung, Kontrolle und Führung.',correct:'R'},
     {text:'Rechnungswesen und Buchhaltung sind letztlich das Gleiche, nämlich jeweils andere Ausdrücke für Finanzbuchhaltung.',correct:'F',reason:'Das Rechnungswesen umfasst mehr als nur die Buchhaltung. Es beinhaltet auch die Betriebsbuchhaltung, Hilfsrechnungen und Auswertungen.'},
@@ -915,7 +937,10 @@ function Ex2({markDone}){
     {text:'Die Finanzbuchhaltung ist Grundlage für weitere Bereiche des Rechnungswesens.',correct:'R'}
   ];
   return e('div',null,
-    e(Tips,{tips:tips,used:tipsUsed,onUse:function(){setTipsUsed(tipsUsed+1)}}),
+    e('div',{style:{display:'flex',gap:16,flexWrap:'wrap',alignItems:'flex-start'}},
+      e('div',{style:{flex:1,minWidth:200}}, e(Tips, {tips:tips, used:tipsUsed, onUse:function(){setTipsUsed(tipsUsed+1)}})),
+      e('div',{style:{flex:1,minWidth:200}}, e(Reveal, {items:revItems, revealed:revUsed, onReveal:function(){setRevUsed(revUsed+1)}}))
+    ),
     e(TrueFalseExercise,{statements,exId:2,markDone})
   );
 }
@@ -924,7 +949,9 @@ function Ex2({markDone}){
 
 function Ex3({markDone}){
   const [tipsUsed, setTipsUsed] = useState(0);
+  const [revUsed, setRevUsed] = useState(0);
   const tips = ['Finanzbuchhaltung = Bilanz + Erfolgsrechnung (extern).','Betriebsbuchhaltung = Kalkulation + Kostenrechnung (intern).','Hilfsrechnungen unterstützen: Debitoren, Kreditoren, Lohn.'];
+  const revItems = [{label:'A',val:'Debitorenbuchhaltung \u2192 1 (Hilfsrechnungen)'},{label:'B',val:'Kalkulation \u2192 3 (Betriebsbuchhaltung)'},{label:'C',val:'Bilanz \u2192 2 (Finanzbuchhaltung)'},{label:'D',val:'Kostenartenrechnung \u2192 3 (Betriebsbuchhaltung)'},{label:'E',val:'Bilanz- und Erfolgsanalyse \u2192 4 (Auswertung)'},{label:'F',val:'Kreditorenbuchhaltung \u2192 1 (Hilfsrechnungen)'},{label:'G',val:'Lohnbuchhaltung \u2192 1 (Hilfsrechnungen)'},{label:'H',val:'Erfolgsrechnung \u2192 2 (Finanzbuchhaltung)'}];
   const cats = ['','1 – Hilfsrechnungen','2 – Hauptbereich Finanzbuchhaltung','3 – Hauptbereich Betriebsbuchhaltung','4 – Auswertung der Buchhaltung'];
   const items = [
     {label:'A) Debitorenbuchhaltung (Kundenbuchhaltung)',correct:'1'},
@@ -946,7 +973,7 @@ function Ex3({markDone}){
     const correct = items.filter((it,i)=>answers[i]===it.correct).length;
     markDone(3, Math.round(correct/items.length*100));
   }
-  function reset(){setAnswers({});setChecked(false);setShowSol(false)}
+  function reset(){setAnswers({});setChecked(false);setShowSol(false);setRevUsed(0)}
 
   return e('div',null,
     e('div',{className:'ex-instruction'},'Ordnen Sie die Begriffe den Bereichen des Rechnungswesens zu.'),
@@ -961,7 +988,10 @@ function Ex3({markDone}){
         )
       );
     }),
-    e(Tips,{tips:tips,used:tipsUsed,onUse:function(){setTipsUsed(tipsUsed+1)}}),
+    e('div',{style:{display:'flex',gap:16,flexWrap:'wrap',alignItems:'flex-start'}},
+      e('div',{style:{flex:1,minWidth:200}}, e(Tips, {tips:tips, used:tipsUsed, onUse:function(){setTipsUsed(tipsUsed+1)}})),
+      e('div',{style:{flex:1,minWidth:200}}, e(Reveal, {items:revItems, revealed:revUsed, onReveal:function(){setRevUsed(revUsed+1)}}))
+    ),
     e('div',{className:'btn-row'},
       !checked?e('button',{className:'btn btn-primary',onClick:check},'Prüfen'):null,
       checked?e('button',{className:'btn btn-secondary',onClick:()=>setShowSol(!showSol)},showSol?'Lösung ausblenden':'Lösung anzeigen'):null,
@@ -1011,7 +1041,9 @@ function TextAnswerExercise({questions, exId, markDone}){
 
 function Ex4({markDone}){
   const [tipsUsed, setTipsUsed] = useState(0);
+  const [revUsed, setRevUsed] = useState(0);
   const tips = ['Die Finanzbuchhaltung bildet den Verkehr mit externen Partnern ab.','Die Geldflussrechnung zeigt die Liquiditätsentwicklung.','Die Betriebsbuchhaltung dient der internen Führung.'];
+  const revItems = [{label:'A',val:'Finanzbuchhaltung'},{label:'B',val:'Inventar'},{label:'C',val:'Lohnbuchhaltung'},{label:'D',val:'Geldflussrechnung'},{label:'E',val:'Bilanz- und Erfolgsanalyse'},{label:'F',val:'Betriebsbuchhaltung'}];
   const questions = [
     {label:'A',text:'(...) bildet den Verkehr des Unternehmens mit seinen Marktpartnern ab (Kunden, Lieferanten, Finanzpartnern). Dabei ist der Blick auf das Unternehmen als ein Gesamtes gerichtet.',answers:['Finanzbuchhaltung','FIBU']},
     {label:'B',text:'Detaillierte Bestandsaufnahme der Ist-Bestände (aller Vermögens- und Schuldenposten) auf einen Stichtag hin und Kontrollunterlage mit den detailliert aufgeführten Posten.',answers:['Inventar']},
@@ -1021,7 +1053,10 @@ function Ex4({markDone}){
     {label:'F',text:'(...) dient in erster Linie der Führung des Unternehmens mit Zahlen. Es gibt keinerlei externe Vorgaben und es werden möglichst objektive Wertansätze mit entsprechendem Detaillierungsgrad gewählt.',answers:['Betriebsbuchhaltung','BEBU','Betriebsbuchaltung']}
   ];
   return e('div',null,
-    e(Tips,{tips:tips,used:tipsUsed,onUse:function(){setTipsUsed(tipsUsed+1)}}),
+    e('div',{style:{display:'flex',gap:16,flexWrap:'wrap',alignItems:'flex-start'}},
+      e('div',{style:{flex:1,minWidth:200}}, e(Tips, {tips:tips, used:tipsUsed, onUse:function(){setTipsUsed(tipsUsed+1)}})),
+      e('div',{style:{flex:1,minWidth:200}}, e(Reveal, {items:revItems, revealed:revUsed, onReveal:function(){setRevUsed(revUsed+1)}}))
+    ),
     e(TextAnswerExercise,{questions,exId:4,markDone})
   );
 }
@@ -1030,7 +1065,9 @@ function Ex4({markDone}){
 
 function Ex5({markDone}){
   const [tipsUsed, setTipsUsed] = useState(0);
+  const [revUsed, setRevUsed] = useState(0);
   const tips = ['Die Bilanz zeigt Vermögen und Kapital zu einem bestimmten Zeitpunkt.','Aktiven = Vermögen (UV + AV), Passiven = Kapital (FK + EK).','Aktivseite = Mittelverwendung, Passivseite = Mittelherkunft.'];
+  const revItems = [{label:'5A-1',val:'Gegenüberstellung'},{label:'5A-2',val:'Vermögen'},{label:'5A-3',val:'Stichtag'},{label:'5B-1',val:'Aktivseite'},{label:'5B-2',val:'Vermögens'},{label:'5C-1',val:'Umlaufvermögen'},{label:'5C-2',val:'Anlagevermögen'},{label:'5C-3',val:'Passivseite'},{label:'5C-4',val:'Fremdkapital'},{label:'5C-5',val:'Eigenkapital'},{label:'5D-1',val:'Passivseite'},{label:'5D-2',val:'Kapitals'}];
   const allAnswers = [
     ['Gegenüberstellung','Gegenueberstellung'],['Vermögen','Vermoegen'],['Stichtag'],
     ['Aktivseite'],['Vermögens','Vermoegens','Vermögen','Vermoegen'],
@@ -1054,7 +1091,7 @@ function Ex5({markDone}){
     const correct = allAnswers.filter((a,i)=>matchAnswer(inputs[i],a)).length;
     markDone(5, Math.round(correct/12*100));
   }
-  function reset(){setInputs(Array(12).fill(''));setChecked(false);setShowSol(false)}
+  function reset(){setInputs(Array(12).fill(''));setChecked(false);setShowSol(false);setRevUsed(0)}
 
   const partsA = parseBlanks(templateA);
   const partsB = parseBlanks(templateB).map(p=>p.blankIndex!==undefined?{...p,blankIndex:p.blankIndex+3}:p);
@@ -1071,7 +1108,10 @@ function Ex5({markDone}){
     e(LueckenText,{parts:partsC,answers:allAnswers,checked,inputs,onChange}),
     e('div',{className:'section-title'},'D)'),
     e(LueckenText,{parts:partsD,answers:allAnswers,checked,inputs,onChange}),
-    e(Tips,{tips:tips,used:tipsUsed,onUse:function(){setTipsUsed(tipsUsed+1)}}),
+    e('div',{style:{display:'flex',gap:16,flexWrap:'wrap',alignItems:'flex-start'}},
+      e('div',{style:{flex:1,minWidth:200}}, e(Tips, {tips:tips, used:tipsUsed, onUse:function(){setTipsUsed(tipsUsed+1)}})),
+      e('div',{style:{flex:1,minWidth:200}}, e(Reveal, {items:revItems, revealed:revUsed, onReveal:function(){setRevUsed(revUsed+1)}}))
+    ),
     e('div',{className:'btn-row'},
       !checked?e('button',{className:'btn btn-primary',onClick:check},'Prüfen'):null,
       checked?e('button',{className:'btn btn-secondary',onClick:()=>setShowSol(!showSol)},showSol?'Lösung ausblenden':'Lösung anzeigen'):null,
@@ -1086,7 +1126,9 @@ function Ex5({markDone}){
 
 function Ex6({markDone}){
   const [tipsUsed, setTipsUsed] = useState(0);
+  const [revUsed, setRevUsed] = useState(0);
   const tips = ['Die goldene Bilanzregel: Langfristiges Kapital \u2265 Anlagevermögen.','Eigenkapital = Aktiven \u2212 Fremdkapital (immer!).','Rechtsformtypische EK-Posten: AG hat Aktienkapital, EU hat Eigenkapital.'];
+  const revItems = [{label:'1',val:'Richtig'},{label:'2',val:'Richtig'},{label:'3',val:'Falsch \u2013 FK kann auch tiefer sein als EK'},{label:'4',val:'Richtig'},{label:'5',val:'Richtig'},{label:'6',val:'Falsch \u2013 langfr. Kapital (EK+langfr.FK) \u2265 AV'}];
   const statements = [
     {text:'Anlagevermögen und Eigenkapital zählen zum langfristigen Bereich.',correct:'R'},
     {text:'Stets gilt: Eigenkapital = Aktiven – Fremdkapital.',correct:'R'},
@@ -1096,7 +1138,10 @@ function Ex6({markDone}){
     {text:'Zur Einhaltung der goldenen Bilanzregel muss das Eigenkapital mindestens so hoch sein wie das Anlagevermögen.',correct:'F',reason:'Die goldene Bilanzregel besagt, dass das langfristige Kapital (EK + langfr. FK) mindestens so hoch sein muss wie das Anlagevermögen, nicht nur das EK allein.'}
   ];
   return e('div',null,
-    e(Tips,{tips:tips,used:tipsUsed,onUse:function(){setTipsUsed(tipsUsed+1)}}),
+    e('div',{style:{display:'flex',gap:16,flexWrap:'wrap',alignItems:'flex-start'}},
+      e('div',{style:{flex:1,minWidth:200}}, e(Tips, {tips:tips, used:tipsUsed, onUse:function(){setTipsUsed(tipsUsed+1)}})),
+      e('div',{style:{flex:1,minWidth:200}}, e(Reveal, {items:revItems, revealed:revUsed, onReveal:function(){setRevUsed(revUsed+1)}}))
+    ),
     e(TrueFalseExercise,{statements,exId:6,markDone})
   );
 }
@@ -1105,7 +1150,9 @@ function Ex6({markDone}){
 
 function Ex7({markDone}){
   const [tipsUsed, setTipsUsed] = useState(0);
+  const [revUsed, setRevUsed] = useState(0);
   const tips = ['Grundformel: Vermögen = Fremdkapital + Eigenkapital.','Reinvermögen = Eigenkapital = Vermögen \u2212 Schulden.'];
+  const revItems = [{label:'Zeile 1',val:'Reinvermögen/EK = 570 \u2212 290 = 280'},{label:'Zeile 2',val:'Vermögen = 100 + 320 = 420'},{label:'Zeile 3',val:'Vermögen = 200 + 750 = 950'},{label:'Zeile 4',val:'EK = 600 \u2212 490 = 110'}];
   const rows = [
     {labels:['Vermögen','Schulden','Reinvermögen/EK'], vals:[570,290,null], answer:280, ansIdx:2},
     {labels:['Reinvermögen','Schulden','Vermögen'], vals:[100,320,null], answer:420, ansIdx:2},
@@ -1122,7 +1169,7 @@ function Ex7({markDone}){
     const correct = rows.filter((r,i)=>parseInt(inputs[i])===r.answer).length;
     markDone(7, Math.round(correct/4*100));
   }
-  function reset(){setInputs(Array(4).fill(''));setChecked(false);setShowSol(false)}
+  function reset(){setInputs(Array(4).fill(''));setChecked(false);setShowSol(false);setRevUsed(0)}
 
   return e('div',null,
     e('div',{className:'ex-instruction'},'Berechnen Sie die fehlende Grösse. Alle Beträge in CHF 1\'000.'),
@@ -1151,7 +1198,10 @@ function Ex7({markDone}){
         })
       )
     ),
-    e(Tips,{tips:tips,used:tipsUsed,onUse:function(){setTipsUsed(tipsUsed+1)}}),
+    e('div',{style:{display:'flex',gap:16,flexWrap:'wrap',alignItems:'flex-start'}},
+      e('div',{style:{flex:1,minWidth:200}}, e(Tips, {tips:tips, used:tipsUsed, onUse:function(){setTipsUsed(tipsUsed+1)}})),
+      e('div',{style:{flex:1,minWidth:200}}, e(Reveal, {items:revItems, revealed:revUsed, onReveal:function(){setRevUsed(revUsed+1)}}))
+    ),
     e('div',{className:'btn-row'},
       !checked?e('button',{className:'btn btn-primary',onClick:check},'Prüfen'):null,
       checked?e('button',{className:'btn btn-secondary',onClick:()=>setShowSol(!showSol)},showSol?'Lösung ausblenden':'Lösung anzeigen'):null,
@@ -1166,7 +1216,9 @@ function Ex7({markDone}){
 
 function Ex8({markDone}){
   const [tipsUsed, setTipsUsed] = useState(0);
+  const [revUsed, setRevUsed] = useState(0);
   const tips = ['UV: Vermögen < 1 Jahr (Kasse, Bank, Forderungen, Vorräte).','AV: Vermögen > 1 Jahr (Immobilien, Maschinen, Fahrzeuge).','FK: Schulden (Verbindlichkeiten, Darlehen, Hypotheken). EK: Aktienkapital, Reserven.'];
+  const revItems = [{label:'Liquide Mittel',val:'UV'},{label:'Hypotheken',val:'FK'},{label:'Aktivdarlehen',val:'AV'},{label:'Bankguthaben',val:'UV'},{label:'Kasse',val:'UV'},{label:'Aktienkapital',val:'EK'},{label:'Rohmaterial',val:'UV'},{label:'Ford. aus L+L',val:'UV'},{label:'Verb. aus L+L',val:'FK'},{label:'Fahrzeuge',val:'AV'},{label:'Eigenkapital',val:'EK'},{label:'Büromaschinen',val:'AV'},{label:'Mobiliar',val:'AV'},{label:'Darlehensschulden',val:'FK'},{label:'Reserven',val:'EK'},{label:'Fertigfabrikate',val:'UV'},{label:'Rückstellungen',val:'FK'},{label:'Immobilien',val:'AV'},{label:'Wertschriften',val:'UV'},{label:'Post',val:'UV'},{label:'Maschinen',val:'AV'}];
   const items = [
     {name:'Liquide Mittel',correct:'UV'},
     {name:'Hypotheken',correct:'FK'},
@@ -1205,7 +1257,7 @@ function Ex8({markDone}){
     const correct = items.filter((it,i)=>answers[i]===it.correct).length;
     markDone(8, Math.round(correct/items.length*100));
   }
-  function reset(){setAnswers({});setChecked(false);setShowSol(false)}
+  function reset(){setAnswers({});setChecked(false);setShowSol(false);setRevUsed(0)}
 
   return e('div',null,
     e('div',{className:'ex-instruction'},'Ordnen Sie jede Position der richtigen Bilanzhauptgruppe zu (UV=Umlaufvermögen, AV=Anlagevermögen, FK=Fremdkapital, EK=Eigenkapital).'),
@@ -1229,7 +1281,10 @@ function Ex8({markDone}){
         )
       )
     ),
-    e(Tips,{tips:tips,used:tipsUsed,onUse:function(){setTipsUsed(tipsUsed+1)}}),
+    e('div',{style:{display:'flex',gap:16,flexWrap:'wrap',alignItems:'flex-start'}},
+      e('div',{style:{flex:1,minWidth:200}}, e(Tips, {tips:tips, used:tipsUsed, onUse:function(){setTipsUsed(tipsUsed+1)}})),
+      e('div',{style:{flex:1,minWidth:200}}, e(Reveal, {items:revItems, revealed:revUsed, onReveal:function(){setRevUsed(revUsed+1)}}))
+    ),
     e('div',{className:'btn-row'},
       !checked?e('button',{className:'btn btn-primary',onClick:check},'Prüfen'):null,
       checked?e('button',{className:'btn btn-secondary',onClick:()=>setShowSol(!showSol)},showSol?'Lösung ausblenden':'Lösung anzeigen'):null,
@@ -1244,7 +1299,9 @@ function Ex8({markDone}){
 
 function Ex9({markDone}){
   const [tipsUsed, setTipsUsed] = useState(0);
+  const [revUsed, setRevUsed] = useState(0);
   const tips = ['Forderungen aus L+L = offene Kundenrechnungen (Debitoren).','Verbindlichkeiten aus L+L = offene Lieferantenrechnungen (Kreditoren).','Hypothek = Darlehen mit Grundpfand als Sicherheit.'];
+  const revItems = [{label:'1',val:'Kasse'},{label:'2',val:'Bank(schuld)'},{label:'3',val:'Fahrzeuge'},{label:'4',val:'Mobiliar'},{label:'5',val:'Halbfabrikate'},{label:'6',val:'Maschinen'},{label:'7',val:'Immobilien'},{label:'8',val:'Warenbestand'},{label:'9',val:'Bank(guthaben)'},{label:'10',val:'Verbindlichkeiten aus L+L'},{label:'11',val:'Rohmaterialvorrat'},{label:'12',val:'Post'},{label:'13',val:'Fertigfabrikate'},{label:'14',val:'Aktivdarlehen'},{label:'15',val:'Hypothek'},{label:'16',val:'Forderungen aus L+L'}];
   const terms = ['','Aktivdarlehen','Bank(guthaben)','Bank(schuld)','Fahrzeuge','Fertigfabrikate','Forderungen aus L+L','Halbfabrikate','Hypothek','Immobilien','Kasse','Maschinen','Mobiliar','Post','Rohmaterialvorrat','Verbindlichkeiten aus L+L','Warenbestand'];
   const items = [
     {text:'Bargeld in der Kasse (Banknoten und Münzen)',answer:'Kasse'},
@@ -1274,7 +1331,7 @@ function Ex9({markDone}){
     const correct = items.filter((it,i)=>answers[i]===it.answer).length;
     markDone(9, Math.round(correct/items.length*100));
   }
-  function reset(){setAnswers({});setChecked(false);setShowSol(false)}
+  function reset(){setAnswers({});setChecked(false);setShowSol(false);setRevUsed(0)}
 
   return e('div',null,
     e('div',{className:'ex-instruction'},'Wählen Sie den passenden buchhalterischen Begriff.'),
@@ -1289,7 +1346,10 @@ function Ex9({markDone}){
         )
       );
     }),
-    e(Tips,{tips:tips,used:tipsUsed,onUse:function(){setTipsUsed(tipsUsed+1)}}),
+    e('div',{style:{display:'flex',gap:16,flexWrap:'wrap',alignItems:'flex-start'}},
+      e('div',{style:{flex:1,minWidth:200}}, e(Tips, {tips:tips, used:tipsUsed, onUse:function(){setTipsUsed(tipsUsed+1)}})),
+      e('div',{style:{flex:1,minWidth:200}}, e(Reveal, {items:revItems, revealed:revUsed, onReveal:function(){setRevUsed(revUsed+1)}}))
+    ),
     e('div',{className:'btn-row'},
       !checked?e('button',{className:'btn btn-primary',onClick:check},'Prüfen'):null,
       checked?e('button',{className:'btn btn-secondary',onClick:()=>setShowSol(!showSol)},showSol?'Lösung ausblenden':'Lösung anzeigen'):null,
@@ -1304,7 +1364,9 @@ function Ex9({markDone}){
 
 function Ex10({markDone}){
   const [tipsUsed, setTipsUsed] = useState(0);
+  const [revUsed, setRevUsed] = useState(0);
   const tips = ['Flüssige Mittel = Kasse + Post + Bank.','Bilanzsumme = Total Aktiven = Total Passiven.','Umlaufvermögen = kurzfristig gebundene Vermögenswerte.'];
+  const revItems = [{label:'A',val:'Forderungen aus L+L'},{label:'B',val:'Bilanzsumme'},{label:'C',val:'Verbindlichkeiten aus L+L'},{label:'D',val:'Umlaufvermögen'},{label:'E',val:'Post'},{label:'F',val:'Flüssige Mittel'},{label:'G',val:'Fertigfabrikate'},{label:'H',val:'Passiven'},{label:'I',val:'Bilanz'},{label:'J',val:'Aktiven'},{label:'K',val:'Anlagevermögen'}];
   const questions = [
     {label:'A',text:'Guthaben gegenüber Kunden oder offene Kundenrechnungen.',answers:['Forderungen aus L+L','Forderungen','Debitoren','Forderungen aus Lieferungen und Leistungen']},
     {label:'B',text:'Bezeichnung, die sowohl für die Summe der Aktiven als auch für die Summe der Passiven benutzt wird.',answers:['Bilanzsumme']},
@@ -1319,7 +1381,10 @@ function Ex10({markDone}){
     {label:'K',text:'Bewegliches Sachvermögen, das im Unternehmen als «Infrastruktur» längerfristig oder dauernd gebunden ist.',answers:['Anlagevermögen','Anlagevermoegen','Sachanlagen']}
   ];
   return e('div',null,
-    e(Tips,{tips:tips,used:tipsUsed,onUse:function(){setTipsUsed(tipsUsed+1)}}),
+    e('div',{style:{display:'flex',gap:16,flexWrap:'wrap',alignItems:'flex-start'}},
+      e('div',{style:{flex:1,minWidth:200}}, e(Tips, {tips:tips, used:tipsUsed, onUse:function(){setTipsUsed(tipsUsed+1)}})),
+      e('div',{style:{flex:1,minWidth:200}}, e(Reveal, {items:revItems, revealed:revUsed, onReveal:function(){setRevUsed(revUsed+1)}}))
+    ),
     e(TextAnswerExercise,{questions,exId:10,markDone})
   );
 }
@@ -1328,7 +1393,9 @@ function Ex10({markDone}){
 
 function Ex11({markDone}){
   const [tipsUsed, setTipsUsed] = useState(0);
+  const [revUsed, setRevUsed] = useState(0);
   const tips = ['Aktiven: zuerst UV (flüssig \u2192 weniger flüssig), dann AV.','Passiven: zuerst FK (kurzfristig \u2192 langfristig), dann EK.','Rohmaterial/Fertigfabrikate \u2192 UV. Produktionsanlagen \u2192 AV.'];
+  const revItems = [{label:'Aktiv 1',val:'Flüssige Mittel'},{label:'Aktiv 2',val:'Forderungen aus L+L'},{label:'Aktiv 3',val:'Rohmaterial und Halbfabrikate'},{label:'Aktiv 4',val:'Fertigfabrikate'},{label:'Aktiv 5',val:'Mobiliar und Büroeinrichtungen'},{label:'Aktiv 6',val:'Produktionsanlagen'},{label:'Passiv 1',val:'Verbindlichkeiten aus L+L'},{label:'Passiv 2',val:'Bankschuld'},{label:'Passiv 3',val:'Darlehen'},{label:'Passiv 4',val:'Aktienkapital'},{label:'Passiv 5',val:'Reserven und Gewinnvortrag'},{label:'Branche',val:'Produktionsbetrieb / Industrie'},{label:'Rechtsform',val:'Aktiengesellschaft (AG)'}];
   const allItems = [
     'Aktienkapital','Mobiliar und Büroeinrichtungen','Bankschuld','Produktionsanlagen',
     'Darlehen (Darlehensschulden)','Reserven und Gewinnvortrag','Fertigfabrikate',
@@ -1360,7 +1427,7 @@ function Ex11({markDone}){
     if(matchAnswer(rechtsform,['Aktiengesellschaft','AG','Aktiengesellschaft (AG)'])) score++;
     markDone(11, Math.round(score/total*100));
   }
-  function reset(){setAssignments({});setBranche('');setRechtsform('');setChecked(false);setShowSol(false)}
+  function reset(){setAssignments({});setBranche('');setRechtsform('');setChecked(false);setShowSol(false);setRevUsed(0)}
 
   return e('div',null,
     e('div',{className:'ex-instruction'},'Ordnen Sie die Positionen der Aktiv- oder Passivseite zu.'),
@@ -1399,7 +1466,10 @@ function Ex11({markDone}){
       e('label',null,'C) Welche Rechtsform hat das Unternehmen?'),
       e('input',{className:'text-input'+(checked?(matchAnswer(rechtsform,['Aktiengesellschaft','AG','Aktiengesellschaft (AG)'])?' correct':' wrong'):''),type:'text',value:rechtsform,onChange:ev=>setRechtsform(ev.target.value),disabled:checked,placeholder:'Ihre Antwort...'})
     ),
-    e(Tips,{tips:tips,used:tipsUsed,onUse:function(){setTipsUsed(tipsUsed+1)}}),
+    e('div',{style:{display:'flex',gap:16,flexWrap:'wrap',alignItems:'flex-start'}},
+      e('div',{style:{flex:1,minWidth:200}}, e(Tips, {tips:tips, used:tipsUsed, onUse:function(){setTipsUsed(tipsUsed+1)}})),
+      e('div',{style:{flex:1,minWidth:200}}, e(Reveal, {items:revItems, revealed:revUsed, onReveal:function(){setRevUsed(revUsed+1)}}))
+    ),
     e('div',{className:'btn-row'},
       !checked?e('button',{className:'btn btn-primary',onClick:check},'Prüfen'):null,
       checked?e('button',{className:'btn btn-secondary',onClick:()=>setShowSol(!showSol)},showSol?'Lösung ausblenden':'Lösung anzeigen'):null,
@@ -1418,7 +1488,9 @@ function Ex11({markDone}){
 
 function Ex12({markDone}){
   const [tipsUsed, setTipsUsed] = useState(0);
+  const [revUsed, setRevUsed] = useState(0);
   const tips = ['Ordnen Sie alle Posten der Liste in die Bilanz ein.','Total Aktiven muss gleich Total Passiven sein.','Finanzanlagen und Sachanlagen gehören zum Anlagevermögen.'];
+  const revItems = [{label:'Aktiv: Flüssige Mittel',val:'90'},{label:'Aktiv: Vorräte',val:'77'},{label:'Aktiv: Finanzanlagen',val:'15'},{label:'Aktiv: Sachanlagen',val:'271'},{label:'Passiv: Bankschulden',val:'25'},{label:'Passiv: Darlehen+Hyp.',val:'125'},{label:'Passiv: Aktienkapital',val:'220'},{label:'Passiv: Reserven+GV',val:'114'},{label:'Total',val:'625 = 625'}];
   const aktivenPre = [
     {name:'Flüssige Mittel',val:null,answer:90},
     {name:'Forderungen aus L+L',val:103,answer:null},
@@ -1450,7 +1522,7 @@ function Ex12({markDone}){
     });
     markDone(12, Math.round(correct/allInputs.length*100));
   }
-  function reset(){setInputs({});setChecked(false);setShowSol(false)}
+  function reset(){setInputs({});setChecked(false);setShowSol(false);setRevUsed(0)}
 
   function renderSide(title, items){
     const total = items.reduce((s,it)=> s + (it.val || it.answer || 0), 0);
@@ -1475,7 +1547,10 @@ function Ex12({markDone}){
       renderSide('Aktiven', aktivenPre),
       renderSide('Passiven', passivenPre)
     ),
-    e(Tips,{tips:tips,used:tipsUsed,onUse:function(){setTipsUsed(tipsUsed+1)}}),
+    e('div',{style:{display:'flex',gap:16,flexWrap:'wrap',alignItems:'flex-start'}},
+      e('div',{style:{flex:1,minWidth:200}}, e(Tips, {tips:tips, used:tipsUsed, onUse:function(){setTipsUsed(tipsUsed+1)}})),
+      e('div',{style:{flex:1,minWidth:200}}, e(Reveal, {items:revItems, revealed:revUsed, onReveal:function(){setRevUsed(revUsed+1)}}))
+    ),
     e('div',{className:'btn-row'},
       !checked?e('button',{className:'btn btn-primary',onClick:check},'Prüfen'):null,
       checked?e('button',{className:'btn btn-secondary',onClick:()=>setShowSol(!showSol)},showSol?'Lösung ausblenden':'Lösung anzeigen'):null,
@@ -1493,7 +1568,9 @@ function Ex12({markDone}){
 
 function Ex13({markDone}){
   const [tipsUsed, setTipsUsed] = useState(0);
+  const [revUsed, setRevUsed] = useState(0);
   const tips = ['Berechnen Sie den fehlenden Posten so, dass Aktiven = Passiven.','Waren \u2192 Detailhandel. Rohmaterial + Maschinen \u2192 Industrie.','Einzelunternehmen: nur \u00abEigenkapital\u00bb. AG: Aktienkapital + Reserven.'];
+  const revItems = [{label:'13A: EK',val:'Eigenkapital = 610 \u2212 450 = 160'},{label:'13A: Branche',val:'Detailhandel'},{label:'13A: Rechtsform',val:'Einzelunternehmen'},{label:'13B: Bank',val:'Bankschuld = 900 \u2212 867 = 33'},{label:'13B: Branche',val:'Produktionsbetrieb / Industrie'},{label:'13B: Rechtsform',val:'Aktiengesellschaft (AG)'}];
   // Part A
   const [ekA, setEkA] = useState('');
   const [brancheA, setBrancheA] = useState('');
@@ -1517,7 +1594,7 @@ function Ex13({markDone}){
     if(matchAnswer(rechtsformB,['Aktiengesellschaft','AG','Aktiengesellschaft (AG)'])) score++;
     markDone(13, Math.round(score/6*100));
   }
-  function reset(){setEkA('');setBrancheA('');setRechtsformA('');setBankB('');setBrancheB('');setRechtsformB('');setChecked(false);setShowSol(false)}
+  function reset(){setEkA('');setBrancheA('');setRechtsformA('');setBankB('');setBrancheB('');setRechtsformB('');setChecked(false);setShowSol(false);setRevUsed(0)}
 
   const clsNum = (val, correct) => 'calc-input'+(checked?(parseInt(val)===correct?' correct':' wrong'):'');
   const clsTxt = (val, answers) => 'text-input'+(checked?(matchAnswer(val,answers)?' correct':' wrong'):'');
@@ -1578,7 +1655,10 @@ function Ex13({markDone}){
       e('input',{className:clsTxt(rechtsformB,['Aktiengesellschaft','AG','Aktiengesellschaft (AG)']),type:'text',value:rechtsformB,onChange:ev=>setRechtsformB(ev.target.value),disabled:checked,placeholder:'Ihre Antwort...'})
     ),
 
-    e(Tips,{tips:tips,used:tipsUsed,onUse:function(){setTipsUsed(tipsUsed+1)}}),
+    e('div',{style:{display:'flex',gap:16,flexWrap:'wrap',alignItems:'flex-start'}},
+      e('div',{style:{flex:1,minWidth:200}}, e(Tips, {tips:tips, used:tipsUsed, onUse:function(){setTipsUsed(tipsUsed+1)}})),
+      e('div',{style:{flex:1,minWidth:200}}, e(Reveal, {items:revItems, revealed:revUsed, onReveal:function(){setRevUsed(revUsed+1)}}))
+    ),
     e('div',{className:'btn-row'},
       !checked?e('button',{className:'btn btn-primary',onClick:check},'Prüfen'):null,
       checked?e('button',{className:'btn btn-secondary',onClick:()=>setShowSol(!showSol)},showSol?'Lösung ausblenden':'Lösung anzeigen'):null,
@@ -1595,7 +1675,9 @@ function Ex13({markDone}){
 
 function Ex14({markDone}){
   const [tipsUsed, setTipsUsed] = useState(0);
+  const [revUsed, setRevUsed] = useState(0);
   const tips = ['Vorauszahlungen von Kunden = kurzfristiges Fremdkapital.','Nicht fakturierte DL = UV (geleistete, aber noch nicht verrechnete Arbeit).','Berechnen Sie die fehlende Position über: Aktiven = Passiven.'];
+  const revItems = [{label:'14A: Reserven',val:'613 \u2212 241 = 372'},{label:'14B: Flüssige Mittel',val:'185 \u2212 170 = 15'}];
   const [reservenA, setReservenA] = useState('');
   const [flMittelB, setFlMittelB] = useState('');
   const [checked, setChecked] = useState(false);
@@ -1608,7 +1690,7 @@ function Ex14({markDone}){
     if(parseInt(flMittelB)===15) score++;
     markDone(14, Math.round(score/2*100));
   }
-  function reset(){setReservenA('');setFlMittelB('');setChecked(false);setShowSol(false)}
+  function reset(){setReservenA('');setFlMittelB('');setChecked(false);setShowSol(false);setRevUsed(0)}
 
   const clsNum = (val, correct) => 'calc-input'+(checked?(parseInt(val)===correct?' correct':' wrong'):'');
 
@@ -1652,7 +1734,10 @@ function Ex14({markDone}){
       )
     ),
 
-    e(Tips,{tips:tips,used:tipsUsed,onUse:function(){setTipsUsed(tipsUsed+1)}}),
+    e('div',{style:{display:'flex',gap:16,flexWrap:'wrap',alignItems:'flex-start'}},
+      e('div',{style:{flex:1,minWidth:200}}, e(Tips, {tips:tips, used:tipsUsed, onUse:function(){setTipsUsed(tipsUsed+1)}})),
+      e('div',{style:{flex:1,minWidth:200}}, e(Reveal, {items:revItems, revealed:revUsed, onReveal:function(){setRevUsed(revUsed+1)}}))
+    ),
     e('div',{className:'btn-row'},
       !checked?e('button',{className:'btn btn-primary',onClick:check},'Prüfen'):null,
       checked?e('button',{className:'btn btn-secondary',onClick:()=>setShowSol(!showSol)},showSol?'Lösung ausblenden':'Lösung anzeigen'):null,
@@ -1670,7 +1755,9 @@ function Ex14({markDone}){
 
 function Ex15({markDone}){
   const [tipsUsed, setTipsUsed] = useState(0);
+  const [revUsed, setRevUsed] = useState(0);
   const tips = ['Zeitpunktrechnung: Achten Sie auf die Datumsangaben in den Spalten.','Prozentzahlen zeigen den Anteil jeder Position an der Bilanzsumme (100%).','Summationsstaffeln: FK-Blöcke werden zuerst summiert, dann FK + EK = Total.'];
+  const revItems = [{label:'A',val:'Ja \u2013 Stichtage 31.12.2016 und 31.12.2015'},{label:'B',val:'Serviceleistung, kein obligatorischer Bestandteil'},{label:'C',val:'Anteil jeder Position an der Bilanzsumme (100%)'},{label:'D',val:'Staffel 1: 271141+124323=395464; Staffel 2: 395464+234424=629889'},{label:'E',val:'Warenvorräte (Vorräte / Inventories)'}];
   const qs = [
     {id:'a',q:'A) Die Bilanz ist eine sogenannte Zeitpunktrechnung. Lässt sich das aus der dargestellten Bilanz entnehmen? Wenn ja, wo?',
      ans:['Ja, erkennbar an den Spaltenüberschriften mit konkreten Stichtagen: 31.12.2016 und 31.12.2015. Die Bilanz zeigt die Bestände zu genau diesen Zeitpunkten.'],
@@ -1707,7 +1794,7 @@ function Ex15({markDone}){
     setChecked(true);
     markDone(15,Math.round(correct/5*100));
   }
-  function reset(){setInputs({a:'',b:'',c:'',d:'',e:''});setChecked(false);setShowSol(false);setResults({})}
+  function reset(){setInputs({a:'',b:'',c:'',d:'',e:''});setChecked(false);setShowSol(false);setResults({});setRevUsed(0)}
 
   return e('div',null,
     e('div',{className:'ex-instruction'},'Die folgende Bilanz ist aus dem Geschäftsbericht 2016 der Meyer Burger Gruppe entnommen (Entwicklung von Hightech-Trennsystemen). Es handelt sich um eine Konzernbilanz. Beantworten Sie die Fragen zur Bilanz.'),
@@ -1763,7 +1850,10 @@ function Ex15({markDone}){
       checked&&results[q.id]?e('div',{className:'feedback ok'},'\u2713 Richtig erkannt'):null
     )),
 
-    e(Tips,{tips:tips,used:tipsUsed,onUse:function(){setTipsUsed(tipsUsed+1)}}),
+    e('div',{style:{display:'flex',gap:16,flexWrap:'wrap',alignItems:'flex-start'}},
+      e('div',{style:{flex:1,minWidth:200}}, e(Tips, {tips:tips, used:tipsUsed, onUse:function(){setTipsUsed(tipsUsed+1)}})),
+      e('div',{style:{flex:1,minWidth:200}}, e(Reveal, {items:revItems, revealed:revUsed, onReveal:function(){setRevUsed(revUsed+1)}}))
+    ),
     e('div',{className:'btn-row'},
       !checked?e('button',{className:'btn btn-primary',onClick:check},'Prüfen'):null,
       checked?e('button',{className:'btn btn-secondary',onClick:()=>setShowSol(!showSol)},showSol?'Lösung ausblenden':'Lösung anzeigen'):null,
@@ -1783,7 +1873,9 @@ function Ex15({markDone}){
 
 function Ex16({markDone}){
   const [tipsUsed, setTipsUsed] = useState(0);
+  const [revUsed, setRevUsed] = useState(0);
   const tips = ['Südlich des Gotthards = Italienisch. Wie heisst \u00abBilanz\u00bb auf Italienisch?','\u00abWeniger am Rotieren\u00bb = nicht umlaufend = Anlage...','Passiv sitzen = Passiven. Unterm Strich gleich = Bilanzsumme.'];
+  const revItems = [{label:'1',val:'BILANCIA'},{label:'2',val:'ANLAGEVERMÖGEN'},{label:'3',val:'PASSIVEN'},{label:'4',val:'EIGENKAPITAL'},{label:'5',val:'FREMDKAPITAL'},{label:'6',val:'AKTIVEN'},{label:'7',val:'BILANZSUMME'}];
   const clues = [
     {nr:1,hint:'Südlich des Gotthards das Sinnbild für die Bilanz.',ans:['bilancia'],display:'BILANCIA',len:8},
     {nr:2,hint:'Es ist – sagen wir mal so – auf der Aktivseite viel weniger am Rotieren.',ans:['anlagevermoegen','anlagevermögen'],display:'ANLAGEVERMÖGEN',len:15},
@@ -1804,7 +1896,7 @@ function Ex16({markDone}){
     markDone(16,Math.round(correct/7*100));
   }
   function isCorrect(i){return clues[i].ans.some(a=>normalize(inputs[i])===normalize(a)||(normalize(inputs[i]).replace(/ae/g,'ä').replace(/oe/g,'ö').replace(/ue/g,'ü'))===normalize(a))}
-  function reset(){setInputs(clues.map(()=>''));setChecked(false);setShowSol(false)}
+  function reset(){setInputs(clues.map(()=>''));setChecked(false);setShowSol(false);setRevUsed(0)}
 
   return e('div',null,
     e('div',{className:'ex-instruction'},'Was ist in den Reihen gesucht? Hinweis: Ä = AE, Ö = OE, Ü = UE. Tragen Sie die Lösungswörter ein.'),
@@ -1851,7 +1943,10 @@ function Ex16({markDone}){
       )
     ):null,
 
-    e(Tips,{tips:tips,used:tipsUsed,onUse:function(){setTipsUsed(tipsUsed+1)}}),
+    e('div',{style:{display:'flex',gap:16,flexWrap:'wrap',alignItems:'flex-start'}},
+      e('div',{style:{flex:1,minWidth:200}}, e(Tips, {tips:tips, used:tipsUsed, onUse:function(){setTipsUsed(tipsUsed+1)}})),
+      e('div',{style:{flex:1,minWidth:200}}, e(Reveal, {items:revItems, revealed:revUsed, onReveal:function(){setRevUsed(revUsed+1)}}))
+    ),
     e('div',{className:'btn-row'},
       !checked?e('button',{className:'btn btn-primary',onClick:check},'Prüfen'):null,
       checked?e('button',{className:'btn btn-secondary',onClick:()=>setShowSol(!showSol)},showSol?'Hinweise ausblenden':'Lösungshinweise'):null,
@@ -1882,7 +1977,9 @@ function Ex16({markDone}){
 
 function Ex17({markDone}){
   const [tipsUsed, setTipsUsed] = useState(0);
+  const [revUsed, setRevUsed] = useState(0);
   const tips = ['Aufwand = Wertverzehr (Vermögensabnahme oder Schuldzunahme).','Die ER bezieht sich auf einen Zeitraum (nicht Zeitpunkt wie die Bilanz).','Geschäftsberichte nutzen meist die Staffelform (Berichtsform).'];
+  const revItems = [{label:'A-1',val:'Abnahme'},{label:'A-2',val:'Zunahme'},{label:'A-3',val:'Aufwand'},{label:'B',val:'Zeitraum'},{label:'C',val:'Berichtsform / Staffelform'},{label:'D-1',val:'Wertzuwachs'},{label:'D-2',val:'Zunahme'},{label:'D-3',val:'Abnahme'}];
   const templateA = 'Wertverzehr bzw. einseitiges Vermögens ___(Abnahme)___ bzw. einseitige Schulden ___(Zunahme)___ wird in der Buchhaltung als ___(Aufwand)___ erfasst.';
   const templateB = 'Die Erfolgsrechnung bezieht sich auf einen Zeit ___(raum)___.';
   const templateC = 'Erfolgsrechnungen werden im Unterricht meist in T-Form dargestellt. In Geschäftsberichten überwiegt dagegen die Darstellung in ___(Berichtsform)___.';
@@ -1906,7 +2003,7 @@ function Ex17({markDone}){
     const correct = allAnswers.filter((a,i)=>matchAnswer(inputs[i],a)).length;
     markDone(17, Math.round(correct/8*100));
   }
-  function reset(){setInputs(Array(8).fill(''));setChecked(false);setShowSol(false)}
+  function reset(){setInputs(Array(8).fill(''));setChecked(false);setShowSol(false);setRevUsed(0)}
 
   const partsA = parseBlanks(templateA);
   const partsB = parseBlanks(templateB).map(p=>p.blankIndex!==undefined?{...p,blankIndex:p.blankIndex+3}:p);
@@ -1923,7 +2020,10 @@ function Ex17({markDone}){
     e(LueckenText,{parts:partsC,answers:allAnswers,checked,inputs,onChange}),
     e('div',{className:'section-title'},'D)'),
     e(LueckenText,{parts:partsD,answers:allAnswers,checked,inputs,onChange}),
-    e(Tips,{tips:tips,used:tipsUsed,onUse:function(){setTipsUsed(tipsUsed+1)}}),
+    e('div',{style:{display:'flex',gap:16,flexWrap:'wrap',alignItems:'flex-start'}},
+      e('div',{style:{flex:1,minWidth:200}}, e(Tips, {tips:tips, used:tipsUsed, onUse:function(){setTipsUsed(tipsUsed+1)}})),
+      e('div',{style:{flex:1,minWidth:200}}, e(Reveal, {items:revItems, revealed:revUsed, onReveal:function(){setRevUsed(revUsed+1)}}))
+    ),
     e('div',{className:'btn-row'},
       !checked?e('button',{className:'btn btn-primary',onClick:check},'Prüfen'):null,
       checked?e('button',{className:'btn btn-secondary',onClick:()=>setShowSol(!showSol)},showSol?'Lösung ausblenden':'Lösung anzeigen'):null,
@@ -1943,7 +2043,9 @@ function Ex17({markDone}){
 
 function Ex18({markDone}){
   const [tipsUsed, setTipsUsed] = useState(0);
+  const [revUsed, setRevUsed] = useState(0);
   const tips = ['Erfolg kann Gewinn ODER Verlust sein \u2013 Gewinn ist nicht der Oberbegriff.','Stufungen: einstufig, zweistufig, dreistufig, mehrstufig \u2013 variabel.','EBIT = Betriebsergebnis, ermöglicht Vergleiche ohne Finanzstruktur.'];
+  const revItems = [{label:'1',val:'Richtig'},{label:'2',val:'Falsch \u2013 \u00abErfolg\u00bb ist der Oberbegriff'},{label:'3',val:'Falsch \u2013 Stufenzahl variiert'},{label:'4',val:'Richtig'},{label:'5',val:'Richtig'},{label:'6',val:'Falsch \u2013 meist Berichtsform/Staffelform'},{label:'7',val:'Richtig'}];
   const statements = [
     {text:'Gewinn bedeutet in der Erfolgsrechnung einen Ertragsüberschuss.',correct:'R'},
     {text:'Gewinn ist der allgemeine Ausdruck für den Saldo der Erfolgsrechnung.',correct:'F',explanation:'Der allgemeine Ausdruck ist «Erfolg» – dieser kann Gewinn oder Verlust sein.'},
@@ -1954,7 +2056,10 @@ function Ex18({markDone}){
     {text:'Eine einfache Stufung ist die Gliederung in «betrieblich» und «neutral».',correct:'R'}
   ];
   return e('div',null,
-    e(Tips,{tips:tips,used:tipsUsed,onUse:function(){setTipsUsed(tipsUsed+1)}}),
+    e('div',{style:{display:'flex',gap:16,flexWrap:'wrap',alignItems:'flex-start'}},
+      e('div',{style:{flex:1,minWidth:200}}, e(Tips, {tips:tips, used:tipsUsed, onUse:function(){setTipsUsed(tipsUsed+1)}})),
+      e('div',{style:{flex:1,minWidth:200}}, e(Reveal, {items:revItems, revealed:revUsed, onReveal:function(){setRevUsed(revUsed+1)}}))
+    ),
     e(TrueFalseExercise,{statements,exId:18,markDone})
   );
 }
@@ -1963,7 +2068,9 @@ function Ex18({markDone}){
 
 function Ex19({markDone}){
   const [tipsUsed, setTipsUsed] = useState(0);
+  const [revUsed, setRevUsed] = useState(0);
   const tips = ['Aufwand = Wertverbrauch/Kosten. Ertrag = Wertschöpfung/Einnahmen.','Nutzen Sie den Kontenrahmen: Kl. 3 = Ertrag, Kl. 4-8 = Aufwand.','Personal \u2192 Lohnaufwand. Miete \u2192 Raumaufwand. Zinsen \u2192 Finanzaufwand/-ertrag.'];
+  const revItems = [{label:'1',val:'A \u2013 Personalaufwand'},{label:'2',val:'E \u2013 Finanzertrag'},{label:'3',val:'A \u2013 Handelswarenaufwand'},{label:'4',val:'E \u2013 Dienstleistungsertrag'},{label:'5',val:'A \u2013 Materialaufwand'},{label:'6',val:'A \u2013 Raumaufwand'},{label:'7',val:'A \u2013 Finanzaufwand'},{label:'8',val:'E \u2013 Handelserlös'},{label:'9',val:'A \u2013 Abschreibungen'},{label:'10',val:'E \u2013 Immobilienertrag'},{label:'11',val:'E \u2013 Produktionserlös'},{label:'12',val:'A \u2013 Energieaufwand'},{label:'13',val:'A \u2013 Unterhalt und Reparaturen'},{label:'14',val:'A \u2013 Verwaltungsaufwand'},{label:'15',val:'A \u2013 Werbeaufwand'},{label:'16',val:'A \u2013 Sonstiger betriebl. Aufwand'},{label:'17',val:'E \u2013 Sonstiger betriebl. Ertrag'},{label:'18',val:'E \u2013 Betriebsfremder Ertrag'},{label:'19',val:'A \u2013 Ausserordentlicher Aufwand'}];
   const items = [
     {text:'Wir zahlen für Arbeitsleistungen unserer Mitarbeitenden, d.h. Löhne und Beiträge an Sozialversicherungen.',ae:'A',bez:['Personalaufwand','Lohnaufwand','Sozialversicherungsaufwand']},
     {text:'Auf unserem Bankguthaben oder Postguthaben wird Zins gutgeschrieben.',ae:'E',bez:['Finanzertrag','Zinsertrag']},
@@ -2000,7 +2107,7 @@ function Ex19({markDone}){
     });
     markDone(19, Math.round(correct/(items.length*2)*100));
   }
-  function reset(){setAeAnswers(Array(items.length).fill(''));setBezAnswers(Array(items.length).fill(''));setChecked(false);setShowSol(false)}
+  function reset(){setAeAnswers(Array(items.length).fill(''));setBezAnswers(Array(items.length).fill(''));setChecked(false);setShowSol(false);setRevUsed(0)}
 
   return e('div',null,
     e('div',{className:'ex-instruction'},'Bestimmen Sie, ob es sich um Aufwand (A) oder Ertrag (E) handelt, und geben Sie die buchhalterische Bezeichnung an.'),
@@ -2035,7 +2142,10 @@ function Ex19({markDone}){
         );
       }))
     ),
-    e(Tips,{tips:tips,used:tipsUsed,onUse:function(){setTipsUsed(tipsUsed+1)}}),
+    e('div',{style:{display:'flex',gap:16,flexWrap:'wrap',alignItems:'flex-start'}},
+      e('div',{style:{flex:1,minWidth:200}}, e(Tips, {tips:tips, used:tipsUsed, onUse:function(){setTipsUsed(tipsUsed+1)}})),
+      e('div',{style:{flex:1,minWidth:200}}, e(Reveal, {items:revItems, revealed:revUsed, onReveal:function(){setRevUsed(revUsed+1)}}))
+    ),
     e('div',{className:'btn-row'},
       !checked?e('button',{className:'btn btn-primary',onClick:check},'Prüfen'):null,
       checked?e('button',{className:'btn btn-secondary',onClick:()=>setShowSol(!showSol)},showSol?'Lösung ausblenden':'Lösung anzeigen'):null,
@@ -2058,7 +2168,9 @@ function Ex19({markDone}){
 
 function Ex20({markDone}){
   const [tipsUsed, setTipsUsed] = useState(0);
+  const [revUsed, setRevUsed] = useState(0);
   const tips = ['Der wichtigste Ertrag zeigt, was das Unternehmen verkauft/leistet.','Handel: Warenertrag/-aufwand. Industrie: Produktionserlöse/Materialaufwand.','Personalaufwand fällt in fast jeder Branche an.'];
+  const revItems = [{label:'Handel \u2013 Ertrag',val:'Warenertrag / Handelserlöse'},{label:'Handel \u2013 Aufwand',val:'Warenaufwand, Personal, Raum, Verwaltung, Werbung, Abschreibungen'},{label:'Industrie \u2013 Ertrag',val:'Produktionserlöse'},{label:'Industrie \u2013 Aufwand',val:'Materialaufwand, Personal, Energie, Abschreibungen, Raum'},{label:'Dienstleistung \u2013 Ertrag',val:'Dienstleistungserlöse'},{label:'Dienstleistung \u2013 Aufwand',val:'Personal, Raum, Informatik, Verwaltung'},{label:'Transport \u2013 Ertrag',val:'Transportertrag'},{label:'Transport \u2013 Aufwand',val:'Treibstoff, Fahrzeug, Personal, Versicherung'},{label:'Beratung \u2013 Ertrag',val:'Honorarertrag / DL-Erlöse'},{label:'Beratung \u2013 Aufwand',val:'Personal, Raum, Informatik'},{label:'Gastgewerbe \u2013 Ertrag',val:'DL-Erlöse'},{label:'Gastgewerbe \u2013 Aufwand',val:'Warenaufwand (Lebensmittel), Personal, Raum'},{label:'Banken \u2013 Ertrag',val:'Zinsertrag, Kommissionsertrag'},{label:'Banken \u2013 Aufwand',val:'Zinsaufwand, Personal, Verwaltung'},{label:'Versicherung \u2013 Ertrag',val:'Prämienertrag'},{label:'Versicherung \u2013 Aufwand',val:'Schadenaufwand, Personal, Verwaltung'}];
   const branches = [
     {name:'Handelsunternehmen',desc:'kaufen Waren und verkaufen sie weiter',ertrag:['Warenertrag','Handelserlöse','Handelserlös'],aufwand:['Warenaufwand','Personalaufwand','Raumaufwand','Verwaltungsaufwand','Werbeaufwand','Abschreibungen']},
     {name:'Industrieunternehmen',desc:'Produktionsunternehmen, kaufen Rohmaterial, stellen Produkte her',ertrag:['Produktionserlöse','Produktionserlös'],aufwand:['Materialaufwand','Personalaufwand','Energieaufwand','Abschreibungen','Raumaufwand']},
@@ -2087,7 +2199,7 @@ function Ex20({markDone}){
     });
     markDone(20, Math.round(score/(branches.length*2)*100));
   }
-  function reset(){setErtragInputs(Array(branches.length).fill(''));setAufwandInputs(Array(branches.length).fill(''));setChecked(false);setShowSol(false)}
+  function reset(){setErtragInputs(Array(branches.length).fill(''));setAufwandInputs(Array(branches.length).fill(''));setChecked(false);setShowSol(false);setRevUsed(0)}
 
   return e('div',null,
     e('div',{className:'ex-instruction'},'Geben Sie für jede Branche typische Ertrags- und Aufwandsposten ein.'),
@@ -2110,7 +2222,10 @@ function Ex20({markDone}){
         'Ertrag: '+br.ertrag.join(', ')+' | Aufwand: '+br.aufwand.join(', ')
       ):null
     )),
-    e(Tips,{tips:tips,used:tipsUsed,onUse:function(){setTipsUsed(tipsUsed+1)}}),
+    e('div',{style:{display:'flex',gap:16,flexWrap:'wrap',alignItems:'flex-start'}},
+      e('div',{style:{flex:1,minWidth:200}}, e(Tips, {tips:tips, used:tipsUsed, onUse:function(){setTipsUsed(tipsUsed+1)}})),
+      e('div',{style:{flex:1,minWidth:200}}, e(Reveal, {items:revItems, revealed:revUsed, onReveal:function(){setRevUsed(revUsed+1)}}))
+    ),
     e('div',{className:'btn-row'},
       !checked?e('button',{className:'btn btn-primary',onClick:check},'Prüfen'):null,
       checked?e('button',{className:'btn btn-secondary',onClick:()=>setShowSol(!showSol)},showSol?'Lösung ausblenden':'Lösung anzeigen'):null,
@@ -2178,7 +2293,9 @@ function ERCalcSub({label, positions, totalAufwand, totalErtrag, result, resultL
 
 function Ex21({markDone}){
   const [tipsUsed, setTipsUsed] = useState(0);
+  const [revUsed, setRevUsed] = useState(0);
   const tips = ['Sortieren Sie: Erträge auf die eine Seite, Aufwände auf die andere.','Gewinn = Total Ertrag \u2212 Total Aufwand (positiv). Verlust = negativ.','Zinserträge und Finanzerträge sind auch Erträge, nicht nur Verkaufserlöse.'];
+  const revItems = [{label:'A: Total Aufwand',val:'252\'900'},{label:'A: Total Ertrag',val:'282\'500'},{label:'A: Gewinn',val:'29\'600'},{label:'B: Total Aufwand',val:'346\'800'},{label:'B: Total Ertrag',val:'340\'000'},{label:'B: Verlust',val:'6\'800'},{label:'C: Total Aufwand',val:'485\'900'},{label:'C: Total Ertrag',val:'525\'100'},{label:'C: Gewinn',val:'39\'200'},{label:'D: Total Aufwand',val:'294\'000'},{label:'D: Total Ertrag',val:'330\'000'},{label:'D: Gewinn',val:'36\'000'}];
   const subsData = [
     {label:'A) Architekturbüro',positions:[
       {name:'Büroaufwand',val:41300},{name:'Fahrzeugaufwand',val:23600},{name:'Finanzertrag',val:2500},{name:'Honorarertrag',val:280000},{name:'Personalaufwand',val:132000},{name:'Übriger Aufwand',val:56000}
@@ -2199,7 +2316,10 @@ function Ex21({markDone}){
 
   return e('div',null,
     e('div',{className:'ex-instruction'},'Erstellen Sie die Erfolgsrechnung aus den gegebenen Positionen. Berechnen Sie Total Aufwand, Total Ertrag und das Ergebnis.'),
-    e(Tips,{tips:tips,used:tipsUsed,onUse:function(){setTipsUsed(tipsUsed+1)}}),
+    e('div',{style:{display:'flex',gap:16,flexWrap:'wrap',alignItems:'flex-start'}},
+      e('div',{style:{flex:1,minWidth:200}}, e(Tips, {tips:tips, used:tipsUsed, onUse:function(){setTipsUsed(tipsUsed+1)}})),
+      e('div',{style:{flex:1,minWidth:200}}, e(Reveal, {items:revItems, revealed:revUsed, onReveal:function(){setRevUsed(revUsed+1)}}))
+    ),
     subsData.map((sd,i)=>e(ERCalcSub,{key:i,label:sd.label,positions:sd.positions,totalAufwand:sd.totalAufwand,totalErtrag:sd.totalErtrag,result:sd.result,resultLabel:sd.resultLabel,subId:i,markDone:subDone,exId:21}))
   );
 }
@@ -2208,7 +2328,9 @@ function Ex21({markDone}){
 
 function Ex22({markDone}){
   const [tipsUsed, setTipsUsed] = useState(0);
+  const [revUsed, setRevUsed] = useState(0);
   const tips = ['Stufe 1 (betrieblich): Warenertrag \u2212 betriebliche Aufwände = Betriebsgewinn.','Stufe 2 (neutral): Liegenschaften + Wertschriften (nicht zum Kerngeschäft).','Stufe 3 (ausserordentlich): Einmalige/seltene Posten. Total = Unternehmensgewinn.'];
+  const revItems = [{label:'Betriebl. Aufwand',val:'153\'100'},{label:'Betriebl. Ertrag',val:'170\'000'},{label:'Betriebsgewinn',val:'16\'900'},{label:'Neutraler Aufwand',val:'9\'200'},{label:'Neutraler Ertrag',val:'10\'700'},{label:'Neutraler Erfolg',val:'1\'500'},{label:'Ausserordn. Aufwand',val:'900'},{label:'Ausserordn. Erfolg',val:'\u2212900'},{label:'Unternehmensgewinn',val:'17\'500'}];
   const [inputs, setInputs] = useState({
     betrAufwand:'',betrErtrag:'',betriebsgewinn:'',
     neutrAufwand:'',neutrErtrag:'',neutralerErfolg:'',
@@ -2235,7 +2357,7 @@ function Ex22({markDone}){
     const correct = keys.filter(k=>numOk(k)).length;
     markDone(22, Math.round(correct/keys.length*100));
   }
-  function reset(){setInputs({betrAufwand:'',betrErtrag:'',betriebsgewinn:'',neutrAufwand:'',neutrErtrag:'',neutralerErfolg:'',aoAufwand:'',aoErtrag:'',aoErfolg:'',unternehmensgewinn:''});setChecked(false);setShowSol(false)}
+  function reset(){setInputs({betrAufwand:'',betrErtrag:'',betriebsgewinn:'',neutrAufwand:'',neutrErtrag:'',neutralerErfolg:'',aoAufwand:'',aoErtrag:'',aoErfolg:'',unternehmensgewinn:''});setChecked(false);setShowSol(false);setRevUsed(0)}
 
   return e('div',null,
     e('div',{className:'ex-instruction'},'Einzelunternehmen F. Mauser, Lederwaren. Erstellen Sie eine dreistufige Erfolgsrechnung in Kontoform. Liegenschaften und Wertschriften = neutral.'),
@@ -2261,7 +2383,10 @@ function Ex22({markDone}){
       e('div',{className:'calc-row'},e('span',{className:'calc-label'},'Unternehmensgewinn:'),e('input',{className:cls('unternehmensgewinn'),value:inputs.unternehmensgewinn,onChange:ev=>ch('unternehmensgewinn',ev.target.value),disabled:checked,placeholder:'CHF'}))
     ),
 
-    e(Tips,{tips:tips,used:tipsUsed,onUse:function(){setTipsUsed(tipsUsed+1)}}),
+    e('div',{style:{display:'flex',gap:16,flexWrap:'wrap',alignItems:'flex-start'}},
+      e('div',{style:{flex:1,minWidth:200}}, e(Tips, {tips:tips, used:tipsUsed, onUse:function(){setTipsUsed(tipsUsed+1)}})),
+      e('div',{style:{flex:1,minWidth:200}}, e(Reveal, {items:revItems, revealed:revUsed, onReveal:function(){setRevUsed(revUsed+1)}}))
+    ),
     e('div',{className:'btn-row'},
       !checked?e('button',{className:'btn btn-primary',onClick:check},'Prüfen'):null,
       checked?e('button',{className:'btn btn-secondary',onClick:()=>setShowSol(!showSol)},showSol?'Lösung ausblenden':'Lösung anzeigen'):null,
@@ -2283,7 +2408,9 @@ function Ex22({markDone}){
 
 function Ex23({markDone}){
   const [tipsUsed, setTipsUsed] = useState(0);
+  const [revUsed, setRevUsed] = useState(0);
   const tips = ['Bruttoerlös = Summe aller Verkaufserlöse. Nettoerlös = Brutto \u2212 Minderungen.','Betriebsergebnis = Nettoerlös \u2212 betriebliche Aufwände.','Neutral: Liegenschaften, Wertschriften, Beteiligungen.'];
+  const revItems = [{label:'Bruttoerlös',val:'1\'265'},{label:'Erlösminderungen',val:'130'},{label:'Nettoerlös',val:'1\'135'},{label:'Betriebl. Aufwand',val:'974'},{label:'Betriebsergebnis',val:'161'},{label:'Neutraler Ertrag',val:'65'},{label:'Neutraler Aufwand',val:'23'},{label:'Neutraler Erfolg',val:'42'},{label:'Ausserord. Aufwand',val:'70'},{label:'Unternehmensgewinn',val:'133'}];
   const [inputs, setInputs] = useState({
     bruttoerloes:'',erlmind:'',nettoerloes:'',
     betrAufwand:'',betriebsergebnis:'',
@@ -2310,7 +2437,7 @@ function Ex23({markDone}){
     const correct = keys.filter(k=>numOk(k)).length;
     markDone(23, Math.round(correct/keys.length*100));
   }
-  function reset(){setInputs({bruttoerloes:'',erlmind:'',nettoerloes:'',betrAufwand:'',betriebsergebnis:'',neutrErtrag:'',neutrAufwand:'',neutralErfolg:'',aoErfolg:'',unternehmensgewinn:''});setChecked(false);setShowSol(false)}
+  function reset(){setInputs({bruttoerloes:'',erlmind:'',nettoerloes:'',betrAufwand:'',betriebsergebnis:'',neutrErtrag:'',neutrAufwand:'',neutralErfolg:'',aoErfolg:'',unternehmensgewinn:''});setChecked(false);setShowSol(false);setRevUsed(0)}
 
   return e('div',null,
     e('div',{className:'ex-instruction'},'Schloss-Garage AG. Erstellen Sie eine mehrstufige Erfolgsrechnung in Berichtsform (alle Werte in CHF 1\'000). Weisen Sie Brutto- und Nettoerlös sowie das Betriebsergebnis aus. Liegenschaften, Wertschriften und Beteiligung = neutral.'),
@@ -2340,7 +2467,10 @@ function Ex23({markDone}){
       e('div',{className:'calc-row'},e('span',{className:'calc-label'},'Unternehmensgewinn:'),e('input',{className:cls('unternehmensgewinn'),value:inputs.unternehmensgewinn,onChange:ev=>ch('unternehmensgewinn',ev.target.value),disabled:checked,placeholder:'1\'000'}))
     ),
 
-    e(Tips,{tips:tips,used:tipsUsed,onUse:function(){setTipsUsed(tipsUsed+1)}}),
+    e('div',{style:{display:'flex',gap:16,flexWrap:'wrap',alignItems:'flex-start'}},
+      e('div',{style:{flex:1,minWidth:200}}, e(Tips, {tips:tips, used:tipsUsed, onUse:function(){setTipsUsed(tipsUsed+1)}})),
+      e('div',{style:{flex:1,minWidth:200}}, e(Reveal, {items:revItems, revealed:revUsed, onReveal:function(){setRevUsed(revUsed+1)}}))
+    ),
     e('div',{className:'btn-row'},
       !checked?e('button',{className:'btn btn-primary',onClick:check},'Prüfen'):null,
       checked?e('button',{className:'btn btn-secondary',onClick:()=>setShowSol(!showSol)},showSol?'Lösung ausblenden':'Lösung anzeigen'):null,
@@ -2364,7 +2494,9 @@ function Ex23({markDone}){
 
 function Ex24({markDone}){
   const [tipsUsed, setTipsUsed] = useState(0);
+  const [revUsed, setRevUsed] = useState(0);
   const tips = ['+ = erhöht das Ergebnis, \u2212 = senkt es, 0 = keine Auswirkung.','Bruttogewinn: Nur Warenaufwand/-ertrag beeinflusst diesen.','Neutrales berührt nur den Unternehmensgewinn, nicht Brutto-/Betriebsgewinn.'];
+  const revItems = [{label:'1: Löhne via Bank',val:'BG: 0 | Betr: \u2212 | UG: \u2212'},{label:'2: Kursgewinne Wertschr.',val:'BG: 0 | Betr: 0 | UG: +'},{label:'3: Rabatte Wareneinkauf',val:'BG: + | Betr: + | UG: +'},{label:'4: Bodenreinigung',val:'BG: 0 | Betr: \u2212 | UG: \u2212'},{label:'5: Warenverkauf auf Kredit',val:'BG: + | Betr: + | UG: +'},{label:'6: Unterhalt Gewerbegebäude',val:'BG: 0 | Betr: 0 | UG: \u2212'},{label:'7: Abschreibung Ladeneinr.',val:'BG: 0 | Betr: \u2212 | UG: \u2212'},{label:'8: Mietaufw./Gutschr. Immob.',val:'BG: 0 | Betr: \u2212 | UG: 0'}];
   const transactions = [
     {text:'Bezahlung der Löhne via Bank',bg:'0',betg:'-',ug:'-'},
     {text:'Kursgewinne auf Wertschriften werden realisiert',bg:'0',betg:'0',ug:'+'},
@@ -2395,7 +2527,7 @@ function Ex24({markDone}){
     });
     markDone(24, Math.round(correct/total*100));
   }
-  function reset(){setAnswers(Array(transactions.length).fill(null).map(()=>({bg:'',betg:'',ug:''})));setChecked(false);setShowSol(false)}
+  function reset(){setAnswers(Array(transactions.length).fill(null).map(()=>({bg:'',betg:'',ug:''})));setChecked(false);setShowSol(false);setRevUsed(0)}
 
   return e('div',null,
     e('div',{className:'ex-instruction'},'Bestimmen Sie für jeden Vorgang die Auswirkung auf die drei Stufenergebnisse: + (erhöht), − (vermindert), 0 (keine Auswirkung).'),
@@ -2427,7 +2559,10 @@ function Ex24({markDone}){
         );
       }))
     ),
-    e(Tips,{tips:tips,used:tipsUsed,onUse:function(){setTipsUsed(tipsUsed+1)}}),
+    e('div',{style:{display:'flex',gap:16,flexWrap:'wrap',alignItems:'flex-start'}},
+      e('div',{style:{flex:1,minWidth:200}}, e(Tips, {tips:tips, used:tipsUsed, onUse:function(){setTipsUsed(tipsUsed+1)}})),
+      e('div',{style:{flex:1,minWidth:200}}, e(Reveal, {items:revItems, revealed:revUsed, onReveal:function(){setRevUsed(revUsed+1)}}))
+    ),
     e('div',{className:'btn-row'},
       !checked?e('button',{className:'btn btn-primary',onClick:check},'Prüfen'):null,
       checked?e('button',{className:'btn btn-secondary',onClick:()=>setShowSol(!showSol)},showSol?'Lösung ausblenden':'Lösung anzeigen'):null,
@@ -2456,7 +2591,9 @@ function Ex24({markDone}){
 
 function Ex25({markDone}){
   const [tipsUsed, setTipsUsed] = useState(0);
+  const [revUsed, setRevUsed] = useState(0);
   const tips = ['Zeitraumrechnung: Die ER zeigt Aufwand/Ertrag über eine Periode (1.1.-31.12.).','Prozentzahlen beziehen sich auf den Nettoerlös (= 100%).','EBITDA = vor Abschreibungen. EBIT = vor Zinsen und Steuern.'];
+  const revItems = [{label:'A',val:'Ja \u2013 Zeitraum 1.1.\u201331.12.2016 und 1.1.\u201331.12.2015'},{label:'B',val:'Serviceleistung, nicht obligatorisch'},{label:'C',val:'Anteil am Nettoerlös (= 100%)'},{label:'D',val:'Sonstiger Betriebsaufwand (Kontenklasse 6)'},{label:'E',val:'KHG 30-39 minus 40-49, dann minus Kl.5, dann minus 60-67, etc.'},{label:'F',val:'Lage verbessert sich \u2013 Verlust wird kleiner'}];
   const questions = [
     {id:'a',label:'A) Die Erfolgsrechnung ist eine sogenannte Zeitraumrechnung. Lässt sich das aus der dargestellten Erfolgsrechnung entnehmen? Wenn ja, wo?',
       keywords:['zeitraum','1.1','31.12','spaltenüberschrift','geschäftsjahr','periode'],
@@ -2491,7 +2628,7 @@ function Ex25({markDone}){
     });
     markDone(25, Math.round(correct/questions.length*100));
   }
-  function reset(){setAnswers({});setChecked(false);setShowSol(false)}
+  function reset(){setAnswers({});setChecked(false);setShowSol(false);setRevUsed(0)}
 
   return e('div',null,
     e('div',{className:'ex-instruction'},'Beantworten Sie die folgenden Fragen zur Erfolgsrechnung aus dem Geschäftsbericht von Meyer Burger.'),
@@ -2512,7 +2649,10 @@ function Ex25({markDone}){
         ):null
       );
     }),
-    e(Tips,{tips:tips,used:tipsUsed,onUse:function(){setTipsUsed(tipsUsed+1)}}),
+    e('div',{style:{display:'flex',gap:16,flexWrap:'wrap',alignItems:'flex-start'}},
+      e('div',{style:{flex:1,minWidth:200}}, e(Tips, {tips:tips, used:tipsUsed, onUse:function(){setTipsUsed(tipsUsed+1)}})),
+      e('div',{style:{flex:1,minWidth:200}}, e(Reveal, {items:revItems, revealed:revUsed, onReveal:function(){setRevUsed(revUsed+1)}}))
+    ),
     e('div',{className:'btn-row'},
       !checked?e('button',{className:'btn btn-primary',onClick:check},'Prüfen'):null,
       checked?e('button',{className:'btn btn-secondary',onClick:()=>setShowSol(!showSol)},showSol?'Lösung ausblenden':'Lösung anzeigen'):null,
