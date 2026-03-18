@@ -209,7 +209,8 @@ const {useState, useEffect, useRef, useCallback, useMemo} = React;
 
 const chapters = [
   {id:1, title:'Uebersicht ueber das Fachgebiet', titleDisplay:'Übersicht über das Fachgebiet', exercises:[1,2,3,4]},
-  {id:2, title:'Bilanz – Ausweis von Vermögen und Schulden', titleDisplay:'Bilanz – Ausweis von Vermögen und Schulden', exercises:[5,6,7,8,9,10,11,12,13,14]}
+  {id:2, title:'Bilanz – Ausweis von Vermögen und Schulden', titleDisplay:'Bilanz – Ausweis von Vermögen und Schulden', exercises:[5,6,7,8,9,10,11,12,13,14,15,16]},
+  {id:3, title:'Erfolgsrechnung: Ausweis von Ertrag, Aufwand und Erfolg', titleDisplay:'Erfolgsrechnung: Ausweis von Ertrag, Aufwand und Erfolg', exercises:[17,18,19,20,21,22,23,24,25]}
 ];
 
 // ─── Helpers ─────────────────────────────────────────────────────────────────
@@ -608,7 +609,7 @@ function App(){
           e('button',{className:'tool-btn'+(showGlossar?' active':''),onClick:()=>setShowGlossar(!showGlossar)},'\ud83d\udcd6'+(showGlossar?' \u2715':' Glossar')),
           e('button',{className:'tool-btn'+(showKR?' active':''),onClick:()=>setShowKR(!showKR)},'\ud83d\udcca'+(showKR?' \u2715':' Kontenrahmen'))
         ),
-        e('span',{className:'nav-btn',style:{fontSize:'.75rem'}}, totalDone+'/14'),
+        e('span',{className:'nav-btn',style:{fontSize:'.75rem'}}, totalDone+'/25'),
         e('button',{className:'nav-btn',onClick:toggleDark}, dark?'\u2600\ufe0f Licht':'\u263e Dunkel'),
         e('button',{className:'nav-btn',onClick:resetAll}, 'Reset')
       )
@@ -672,13 +673,28 @@ const exerciseTitles = {
   11:'Bilanzpositionen in Bilanzschema einordnen',
   12:'Ergänzung der fehlenden Grössen (Papierindustrie)',
   13:'Bilanzen für zwei Unternehmen erstellen',
-  14:'Bilanzen von Dienstleistungsunternehmen'
+  14:'Bilanzen von Dienstleistungsunternehmen',
+  15:'Bilanz aus einem Geschäftsbericht (Meyer Burger)',
+  16:'Kreuzworträtsel zum Thema Bilanz',
+  17:'Lückentext: Erfolgsrechnung',
+  18:'Richtig oder falsch? Erfolgsrechnung',
+  19:'Bezeichnung für Aufwand bzw. Ertrag',
+  20:'Das Geschäft eines Unternehmens abbilden',
+  21:'Erstellen der Erfolgsrechnung',
+  22:'Dreistufige Erfolgsrechnung einer Lederwarenhandlung',
+  23:'Zweistufige Erfolgsrechnung einer Garage',
+  24:'Wie wirken sich Vorgänge auf die Stufenergebnisse aus?',
+  25:'Erfolgsrechnung aus einem Geschäftsbericht (Meyer Burger)'
 };
 const exerciseTypes = {
   1:'Lückentext',2:'Richtig/Falsch',3:'Zuordnung',4:'Freitext',
   5:'Lückentext',6:'Richtig/Falsch',7:'Berechnung',8:'Zuordnung (Tabelle)',
   9:'Zuordnung (Dropdown)',10:'Freitext',11:'Bilanzschema',12:'Bilanzschema',
-  13:'Bilanzschema + Berechnung',14:'Bilanzschema + Berechnung'
+  13:'Bilanzschema + Berechnung',14:'Bilanzschema + Berechnung',
+  15:'Analyse + Freitext',16:'Kreuzworträtsel',
+  17:'Lückentext',18:'Richtig/Falsch',19:'Zuordnung (Tabelle)',20:'Freitext (Branchen)',
+  21:'Erfolgsrechnung erstellen',22:'Erfolgsrechnung (Kontoform)',23:'Erfolgsrechnung (Berichtsform)',
+  24:'Auswirkungsanalyse',25:'Analyse + Freitext'
 };
 
 // ─── Exercise Renderer ──────────────────────────────────────────────────────
@@ -699,6 +715,17 @@ function ExerciseRenderer({exId, markDone, progress}){
     case 12: return e(Ex12,{markDone});
     case 13: return e(Ex13,{markDone});
     case 14: return e(Ex14,{markDone});
+    case 15: return e(Ex15,{markDone});
+    case 16: return e(Ex16,{markDone});
+    case 17: return e(Ex17,{markDone});
+    case 18: return e(Ex18,{markDone});
+    case 19: return e(Ex19,{markDone});
+    case 20: return e(Ex20,{markDone});
+    case 21: return e(Ex21,{markDone});
+    case 22: return e(Ex22,{markDone});
+    case 23: return e(Ex23,{markDone});
+    case 24: return e(Ex24,{markDone});
+    case 25: return e(Ex25,{markDone});
     default: return e('div',null,'Nicht gefunden');
   }
 }
@@ -1572,6 +1599,836 @@ function Ex14({markDone}){
     showSol?e('div',{className:'solution-box'},
       e('div',null,e('strong',null,'A) '),'Reserven = 613 - 70 - 35 - 57 - 34 - 45 = 372'),
       e('div',null,e('strong',null,'B) '),'Flüssige Mittel = 185 - 35 - 20 - 10 - 40 - 65 = 15')
+    ):null
+  );
+}
+
+// ─── Exercise 15: Bilanz aus einem Geschäftsbericht ─────────────────────────
+
+function Ex15({markDone}){
+  const qs = [
+    {id:'a',q:'A) Die Bilanz ist eine sogenannte Zeitpunktrechnung. Lässt sich das aus der dargestellten Bilanz entnehmen? Wenn ja, wo?',
+     ans:['Ja, erkennbar an den Spaltenüberschriften mit konkreten Stichtagen: 31.12.2016 und 31.12.2015. Die Bilanz zeigt die Bestände zu genau diesen Zeitpunkten.'],
+     accept:['zeitpunkt','stichtag','31.12']},
+    {id:'b',q:'B) Es gibt Prozentzahlen: Serviceleistung oder obligatorischer Bestandteil einer Bilanz?',
+     ans:['Die Prozentzahlen sind kein obligatorischer Bestandteil der Bilanz. Sie sind eine freiwillige Zusatzinformation (Serviceleistung) für die Leser, die das Verständnis der Bilanzstruktur erleichtert.'],
+     accept:['service','freiwillig','nicht obligatorisch','kein obligat','zusatz']},
+    {id:'c',q:'C) Wie sind die Prozentzahlen zu lesen? Erläutern Sie dies durch eine verbale Umschreibung oder geben Sie ein konkretes Zahlenbeispiel.',
+     ans:['Die Prozentzahlen zeigen den Anteil jeder Position an der Bilanzsumme (= 100%). Beispiel: Total Umlaufvermögen 412\'159 = 65.4% von Total Aktiven 629\'889. Jede Position wird in Relation zum Gesamttotal dargestellt.'],
+     accept:['anteil','bilanzsumme','100%','prozent','relation','total']},
+    {id:'d',q:'D) Ordnen Sie die 5 Zwischentotale der Passivseite den richtigen Summationsstaffeln zu:\n\nStaffel 1: Kurzfristiges FK (271\'141) + Langfristiges FK (124\'323) = ?\nStaffel 2: Total FK + Total EK inkl. Minderheitsanteilen = ?',
+     ans:['Staffel 1: 271\'141 + 124\'323 = 395\'464 (Total Fremdkapital)\nStaffel 2: 395\'464 + 234\'424 = 629\'889 (Total Passiven)\n\nDie Summationsstaffel baut sich stufenweise auf: Zuerst werden die FK-Blöcke summiert, dann wird Total FK mit Total EK zur Bilanzsumme zusammengefasst.'],
+     accept:['395','629','staffel']},
+    {id:'e',q:'E) Die folgende Tabelle zeigt Detailinformationen aus dem Anhang:\n\nRohmaterial, Einkaufstoffe, Handelsware: 78\'566\nWare in Konsignation: 742\nHalbfabrikate: 46\'186\nFertigfabrikate: 29\'959\nMaschinen vor Abnahme: 75\'844\nAnzahlungen von Kunden: −61\'944\nWertberichtigungen: −64\'712\nTotal: 95\'240 (netto nach Abzügen)\n\nUm welche Erläuterung bzw. welche Bilanzposition handelt es sich?',
+     ans:['Es handelt sich um die Bilanzposition «Warenvorräte» (bzw. Vorräte / Inventories). Die Tabelle zeigt die detaillierte Zusammensetzung der Vorräte mit Bruttobeständen abzüglich Wertberichtigungen und Kundenanzahlungen.'],
+     accept:['vorr','warenvorr','inventori','lager']}
+  ];
+
+  const [inputs,setInputs]=useState({a:'',b:'',c:'',d:'',e:''});
+  const [checked,setChecked]=useState(false);
+  const [showSol,setShowSol]=useState(false);
+  const [results,setResults]=useState({});
+
+  function check(){
+    const r={};
+    let correct=0;
+    qs.forEach(q=>{
+      const v=normalize(inputs[q.id]||'');
+      const ok=v.length>=10&&q.accept.some(a=>v.indexOf(a)>=0);
+      r[q.id]=ok;
+      if(ok)correct++;
+    });
+    setResults(r);
+    setChecked(true);
+    markDone(15,Math.round(correct/5*100));
+  }
+  function reset(){setInputs({a:'',b:'',c:'',d:'',e:''});setChecked(false);setShowSol(false);setResults({})}
+
+  return e('div',null,
+    e('div',{className:'ex-instruction'},'Die folgende Bilanz ist aus dem Geschäftsbericht 2016 der Meyer Burger Gruppe entnommen (Entwicklung von Hightech-Trennsystemen). Es handelt sich um eine Konzernbilanz. Beantworten Sie die Fragen zur Bilanz.'),
+
+    e('div',{style:{background:'var(--input-bg)',borderRadius:10,padding:14,marginBottom:16,border:'1px solid var(--border)',fontSize:'.8rem',lineHeight:'1.6'}},
+      e('div',{style:{fontWeight:700,marginBottom:8,color:'var(--accent)'}},'Konzernbilanz 2016 der Meyer Burger Gruppe (in CHF 1\'000)'),
+      e('div',{style:{display:'grid',gridTemplateColumns:'1fr 1fr',gap:12}},
+        e('div',null,
+          e('div',{style:{fontWeight:700,borderBottom:'2px solid var(--accent)',paddingBottom:4,marginBottom:6}},'Aktiven'),
+          e('div',{style:{fontWeight:600,color:'var(--accent)',marginTop:4}},'Umlaufvermögen'),
+          ...[['Flüssige Mittel','104\'667'],['Wertschriften','1\'000'],['Forderungen aus L+L','37\'673'],['Sonstige Forderungen','12\'695'],['Nettoverm. aus Fertigungsauftr.','679'],['Warenvorräte','95\'240'],['Aktive Rechnungsabgrenzungen','8\'366']].map(x=>
+            e('div',{key:x[0],style:{display:'flex',justifyContent:'space-between',padding:'2px 0'}},e('span',null,x[0]),e('span',{style:{fontWeight:600}},x[1]))
+          ),
+          e('div',{style:{display:'flex',justifyContent:'space-between',padding:'4px 0',fontWeight:700,borderTop:'1px solid var(--border)',marginTop:4}},e('span',null,'Total Umlaufvermögen'),e('span',null,'412\'159 (65.4%)')),
+          e('div',{style:{fontWeight:600,color:'var(--accent)',marginTop:8}},'Anlagevermögen'),
+          ...[['Sonstige langfristige Ford.','122'],['Sachanlagen','137\'496'],['Immaterielle Anlagen','41\'896'],['Latente Ertragssteuerguthaben','1\'398']].map(x=>
+            e('div',{key:x[0],style:{display:'flex',justifyContent:'space-between',padding:'2px 0'}},e('span',null,x[0]),e('span',{style:{fontWeight:600}},x[1]))
+          ),
+          e('div',{style:{display:'flex',justifyContent:'space-between',padding:'4px 0',fontWeight:700,borderTop:'1px solid var(--border)',marginTop:4}},e('span',null,'Total Anlagevermögen'),e('span',null,'217\'729 (34.6%)')),
+          e('div',{style:{display:'flex',justifyContent:'space-between',padding:'6px 0',fontWeight:800,borderTop:'2px solid var(--text)',marginTop:4}},e('span',null,'Total Aktiven'),e('span',null,'629\'889 (100%)'))
+        ),
+        e('div',null,
+          e('div',{style:{fontWeight:700,borderBottom:'2px solid var(--accent)',paddingBottom:4,marginBottom:6}},'Passiven'),
+          e('div',{style:{fontWeight:600,color:'var(--accent)',marginTop:4}},'Kurzfristiges Fremdkapital'),
+          ...[['Verbindlichkeiten aus L+L','34\'003'],['Kurzfr. Finanzverbindlichkeiten','170\'419'],['Sonstige Verbindlichkeiten','16\'279'],['Passive Rechnungsabgrenzungen','12\'395']].map(x=>
+            e('div',{key:x[0],style:{display:'flex',justifyContent:'space-between',padding:'2px 0'}},e('span',null,x[0]),e('span',{style:{fontWeight:600}},x[1]))
+          ),
+          e('div',{style:{display:'flex',justifyContent:'space-between',padding:'4px 0',fontWeight:700,borderTop:'1px solid var(--border)',marginTop:4}},e('span',null,'Total kurzfr. FK'),e('span',null,'271\'141 (43.0%)')),
+          e('div',{style:{fontWeight:600,color:'var(--accent)',marginTop:8}},'Langfristiges Fremdkapital'),
+          ...[['Sonstige Verbindlichkeiten','3\'128'],['Rückstellungen','170'],['Latente Ertragssteuerguthaben','14\'180']].map(x=>
+            e('div',{key:x[0],style:{display:'flex',justifyContent:'space-between',padding:'2px 0'}},e('span',null,x[0]),e('span',{style:{fontWeight:600}},x[1]))
+          ),
+          e('div',{style:{display:'flex',justifyContent:'space-between',padding:'4px 0',fontWeight:700,borderTop:'1px solid var(--border)',marginTop:4}},e('span',null,'Total langfr. FK'),e('span',null,'124\'323 (13.7%)')),
+          e('div',{style:{display:'flex',justifyContent:'space-between',padding:'4px 0',fontWeight:700,borderTop:'1px solid var(--border)'}},e('span',null,'Total Fremdkapital'),e('span',null,'395\'464')),
+          e('div',{style:{fontWeight:600,color:'var(--accent)',marginTop:8}},'Eigenkapital'),
+          ...[['Aktienkapital','4\'334'],['Agio','141\'196'],['Reserve f. aktienb. Vergütungen','1\'452'],['Kumulierte Verluste','-107\'286'],['Minderheitsanteile','371']].map(x=>
+            e('div',{key:x[0],style:{display:'flex',justifyContent:'space-between',padding:'2px 0'}},e('span',null,x[0]),e('span',{style:{fontWeight:600}},x[1]))
+          ),
+          e('div',{style:{display:'flex',justifyContent:'space-between',padding:'4px 0',fontWeight:700,borderTop:'1px solid var(--border)',marginTop:4}},e('span',null,'Total EK inkl. Minderheitsant.'),e('span',null,'234\'424 (37.2%)')),
+          e('div',{style:{display:'flex',justifyContent:'space-between',padding:'6px 0',fontWeight:800,borderTop:'2px solid var(--text)',marginTop:4}},e('span',null,'Total Passiven'),e('span',null,'629\'889 (100%)'))
+        )
+      )
+    ),
+
+    qs.map(q=>e('div',{key:q.id,className:'text-q'},
+      e('p',{style:{fontWeight:600,whiteSpace:'pre-line'}},q.q),
+      e('textarea',{className:'text-input'+(checked?(results[q.id]?' correct':' wrong'):''),
+        value:inputs[q.id],onChange:ev=>setInputs({...inputs,[q.id]:ev.target.value}),
+        disabled:checked,rows:4,placeholder:'Ihre Antwort\u2026',
+        style:{resize:'vertical',lineHeight:'1.6'}
+      }),
+      checked&&!results[q.id]?e('div',{className:'feedback nok'},'Antwort unvollständig oder nicht erkannt'):null,
+      checked&&results[q.id]?e('div',{className:'feedback ok'},'\u2713 Richtig erkannt'):null
+    )),
+
+    e('div',{className:'btn-row'},
+      !checked?e('button',{className:'btn btn-primary',onClick:check},'Prüfen'):null,
+      checked?e('button',{className:'btn btn-secondary',onClick:()=>setShowSol(!showSol)},showSol?'Lösung ausblenden':'Lösung anzeigen'):null,
+      checked?e('button',{className:'btn btn-reset',onClick:reset},'Zurücksetzen'):null
+    ),
+
+    showSol?e('div',{className:'solution-box'},
+      qs.map(q=>e('div',{key:q.id,style:{marginBottom:12}},
+        e('strong',null,q.q.split('\n')[0]),
+        e('pre',{style:{whiteSpace:'pre-wrap',fontFamily:'Inter,sans-serif',fontSize:'.85rem',margin:'4px 0 0',lineHeight:'1.6'}},q.ans[0])
+      ))
+    ):null
+  );
+}
+
+// ─── Exercise 16: Kreuzworträtsel zum Thema Bilanz ──────────────────────────
+
+function Ex16({markDone}){
+  const clues = [
+    {nr:1,hint:'Südlich des Gotthards das Sinnbild für die Bilanz.',ans:['bilancia'],display:'BILANCIA',len:8},
+    {nr:2,hint:'Es ist – sagen wir mal so – auf der Aktivseite viel weniger am Rotieren.',ans:['anlagevermoegen','anlagevermögen'],display:'ANLAGEVERMÖGEN',len:15},
+    {nr:3,hint:'Eine Ansammlung von Couch-Potatoes? Na ja, darunter hängt jedenfalls das Kapital ab.',ans:['passiven','passiva'],display:'PASSIVEN',len:8},
+    {nr:4,hint:'Ihm zugehörig fühlen sich Aktienkapital, Reserven und Gewinnvortrag.',ans:['eigenkapital'],display:'EIGENKAPITAL',len:12},
+    {nr:5,hint:'Solches aufzunehmen, beschönigt der buchhalterisch verbildete Bankräuber seine Tat.',ans:['fremdkapital'],display:'FREMDKAPITAL',len:12},
+    {nr:6,hint:'Sind die Vermögensposten; dank ihnen kommt auch Schwung ins Vereinsleben.',ans:['aktiven','aktiva'],display:'AKTIVEN',len:7},
+    {nr:7,hint:'Unterm Strich passt es links wie rechts.',ans:['bilanzsumme'],display:'BILANZSUMME',len:11}
+  ];
+
+  const [inputs,setInputs]=useState(clues.map(()=>''));
+  const [checked,setChecked]=useState(false);
+  const [showSol,setShowSol]=useState(false);
+
+  function check(){
+    setChecked(true);
+    const correct=clues.filter((c,i)=>c.ans.some(a=>normalize(inputs[i])===normalize(a)||(normalize(inputs[i]).replace(/ae/g,'ä').replace(/oe/g,'ö').replace(/ue/g,'ü'))===normalize(a))).length;
+    markDone(16,Math.round(correct/7*100));
+  }
+  function isCorrect(i){return clues[i].ans.some(a=>normalize(inputs[i])===normalize(a)||(normalize(inputs[i]).replace(/ae/g,'ä').replace(/oe/g,'ö').replace(/ue/g,'ü'))===normalize(a))}
+  function reset(){setInputs(clues.map(()=>''));setChecked(false);setShowSol(false)}
+
+  return e('div',null,
+    e('div',{className:'ex-instruction'},'Was ist in den Reihen gesucht? Hinweis: Ä = AE, Ö = OE, Ü = UE. Tragen Sie die Lösungswörter ein.'),
+
+    e('div',{style:{marginBottom:16}},
+      clues.map((c,i)=>e('div',{key:c.nr,style:{
+        padding:'12px 16px',marginBottom:8,borderRadius:10,
+        background:checked?(isCorrect(i)?'rgba(5,150,105,.06)':'rgba(220,38,38,.06)'):'var(--input-bg)',
+        border:'1px solid '+(checked?(isCorrect(i)?'var(--green)':'var(--red)'):'var(--border)'),
+        transition:'all .2s'
+      }},
+        e('div',{style:{display:'flex',alignItems:'center',gap:10,marginBottom:8}},
+          e('span',{style:{
+            background:checked?(isCorrect(i)?'var(--green)':'var(--red)'):'var(--accent)',
+            color:'#fff',width:28,height:28,borderRadius:7,display:'flex',alignItems:'center',justifyContent:'center',
+            fontWeight:700,fontSize:'.85rem',flexShrink:0
+          }},c.nr),
+          e('span',{style:{fontSize:'.9rem',fontWeight:600,lineHeight:'1.4',flex:1}},c.hint)
+        ),
+        e('div',{style:{display:'flex',alignItems:'center',gap:10}},
+          e('input',{
+            type:'text',value:inputs[i],
+            onChange:ev=>{const n=[...inputs];n[i]=ev.target.value;setInputs(n)},
+            disabled:checked,
+            placeholder:c.len+' Buchstaben\u2026',
+            style:{
+              flex:1,padding:'8px 12px',borderRadius:8,fontSize:'.9rem',fontWeight:600,
+              letterSpacing:'1px',textTransform:'uppercase',
+              border:'1.5px solid '+(checked?(isCorrect(i)?'var(--green)':'var(--red)'):'var(--border)'),
+              background:checked?'transparent':'var(--card)',color:'var(--text)',outline:'none',
+              fontFamily:'Inter,monospace'
+            }
+          }),
+          checked?e('span',{style:{fontSize:'.85rem',fontWeight:700,color:isCorrect(i)?'var(--green)':'var(--red)'}},
+            isCorrect(i)?'\u2713':'\u2717 '+c.display
+          ):e('span',{style:{fontSize:'.75rem',color:'var(--text2)',minWidth:20}},c.len)
+        )
+      ))
+    ),
+
+    checked?e('div',{style:{marginBottom:12}},
+      e('span',{className:'score-badge '+(clues.filter((c,i)=>isCorrect(i)).length>=5?'good':'bad')},
+        clues.filter((c,i)=>isCorrect(i)).length+'/7 richtig'
+      )
+    ):null,
+
+    e('div',{className:'btn-row'},
+      !checked?e('button',{className:'btn btn-primary',onClick:check},'Prüfen'):null,
+      checked?e('button',{className:'btn btn-secondary',onClick:()=>setShowSol(!showSol)},showSol?'Hinweise ausblenden':'Lösungshinweise'):null,
+      checked?e('button',{className:'btn btn-reset',onClick:reset},'Zurücksetzen'):null
+    ),
+
+    showSol?e('div',{className:'solution-box'},
+      e('div',{style:{fontWeight:700,marginBottom:8}},'Lösungen:'),
+      clues.map(c=>e('div',{key:c.nr,style:{marginBottom:4}},
+        e('strong',null,c.nr+'. '+c.display+': '),
+        e('span',null,c.hint)
+      )),
+      e('div',{style:{marginTop:12,padding:'10px 14px',borderRadius:8,background:'rgba(59,130,246,.08)',border:'1px solid var(--accent)'}},
+        e('div',{style:{fontWeight:700,color:'var(--accent)',marginBottom:4}},'Hinweise zu den senkrechten Hilfsfeldern:'),
+        e('div',{style:{fontSize:'.8rem',lineHeight:'1.6'}},
+          '\u2022 Octubre por ejemplo \u2192 MONAT',e('br'),
+          '\u2022 KI: bei Spielburg oder eines kleineren Kantons \u2192 AI',e('br'),
+          '\u2022 A Fish Called Wanda: Die drei Attacken \u2192 GAG',e('br'),
+          '\u2022 AHV jenseits des Röstigrabens \u2192 AVS',e('br'),
+          '\u2022 Unter Chernikern kurz für Chrom \u2192 CR'
+        )
+      )
+    ):null
+  );
+}
+
+// ─── Exercise 17: Lückentext Erfolgsrechnung ────────────────────────────────
+
+function Ex17({markDone}){
+  const templateA = 'Wertverzehr bzw. einseitiges Vermögens ___(Abnahme)___ bzw. einseitige Schulden ___(Zunahme)___ wird in der Buchhaltung als ___(Aufwand)___ erfasst.';
+  const templateB = 'Die Erfolgsrechnung bezieht sich auf einen Zeit ___(raum)___.';
+  const templateC = 'Erfolgsrechnungen werden im Unterricht meist in T-Form dargestellt. In Geschäftsberichten überwiegt dagegen die Darstellung in ___(Berichtsform)___.';
+  const templateD = 'Ertrag stellt einen ___(Wertzuwachs)___ durch einseitiges Vermögens ___(Zunahme)___ bzw. einseitige Schulden ___(Abnahme)___ dar.';
+
+  const allAnswers = [
+    ['Abnahme','abnehmen'],['Zunahme','zunehmen'],['Aufwand'],
+    ['raum'],
+    ['Berichtsform','Staffelform'],
+    ['Wertzuwachs'],['Zunahme','zunehmen'],['Abnahme','abnehmen']
+  ];
+  const allBlanks = ['Abnahme','Zunahme','Aufwand','raum','Berichtsform/Staffelform','Wertzuwachs','Zunahme','Abnahme'];
+
+  const [inputs, setInputs] = useState(Array(8).fill(''));
+  const [checked, setChecked] = useState(false);
+  const [showSol, setShowSol] = useState(false);
+
+  function onChange(i,v){const n=[...inputs];n[i]=v;setInputs(n)}
+  function check(){
+    setChecked(true);
+    const correct = allAnswers.filter((a,i)=>matchAnswer(inputs[i],a)).length;
+    markDone(17, Math.round(correct/8*100));
+  }
+  function reset(){setInputs(Array(8).fill(''));setChecked(false);setShowSol(false)}
+
+  const partsA = parseBlanks(templateA);
+  const partsB = parseBlanks(templateB).map(p=>p.blankIndex!==undefined?{...p,blankIndex:p.blankIndex+3}:p);
+  const partsC = parseBlanks(templateC).map(p=>p.blankIndex!==undefined?{...p,blankIndex:p.blankIndex+4}:p);
+  const partsD = parseBlanks(templateD).map(p=>p.blankIndex!==undefined?{...p,blankIndex:p.blankIndex+5}:p);
+
+  return e('div',null,
+    e('div',{className:'ex-instruction'},'Ergänzen Sie die fehlenden Begriffe.'),
+    e('div',{className:'section-title'},'A)'),
+    e(LueckenText,{parts:partsA,answers:allAnswers,checked,inputs,onChange}),
+    e('div',{className:'section-title'},'B)'),
+    e(LueckenText,{parts:partsB,answers:allAnswers,checked,inputs,onChange}),
+    e('div',{className:'section-title'},'C)'),
+    e(LueckenText,{parts:partsC,answers:allAnswers,checked,inputs,onChange}),
+    e('div',{className:'section-title'},'D)'),
+    e(LueckenText,{parts:partsD,answers:allAnswers,checked,inputs,onChange}),
+    e('div',{className:'btn-row'},
+      !checked?e('button',{className:'btn btn-primary',onClick:check},'Prüfen'):null,
+      checked?e('button',{className:'btn btn-secondary',onClick:()=>setShowSol(!showSol)},showSol?'Lösung ausblenden':'Lösung anzeigen'):null,
+      checked?e('button',{className:'btn btn-reset',onClick:reset},'Zurücksetzen'):null
+    ),
+    checked?e('div',{style:{marginTop:12}},
+      e('span',{className:'score-badge '+(allAnswers.filter((a,i)=>matchAnswer(inputs[i],a)).length===8?'good':'bad')},
+        allAnswers.filter((a,i)=>matchAnswer(inputs[i],a)).length+'/8 richtig')
+    ):null,
+    showSol?e('div',{className:'solution-box'},
+      e('strong',null,'Lösungen: '), allBlanks.join(', ')
+    ):null
+  );
+}
+
+// ─── Exercise 18: Richtig oder falsch? Erfolgsrechnung ──────────────────────
+
+function Ex18({markDone}){
+  const statements = [
+    {text:'Gewinn bedeutet in der Erfolgsrechnung einen Ertragsüberschuss.',correct:'R'},
+    {text:'Gewinn ist der allgemeine Ausdruck für den Saldo der Erfolgsrechnung.',correct:'F',explanation:'Der allgemeine Ausdruck ist «Erfolg» – dieser kann Gewinn oder Verlust sein.'},
+    {text:'Eine gestufte Erfolgsrechnung hat immer drei Stufen.',correct:'F',explanation:'Die Stufung kann variieren: Es gibt einstufige, zweistufige, dreistufige und mehrstufige ERs.'},
+    {text:'Bruttogewinn ist ein Ergebnis in einer gestuften Erfolgsrechnung.',correct:'R'},
+    {text:'Der EBIT dient zum Vergleich betrieblicher Ergebnisse.',correct:'R'},
+    {text:'In Geschäftsberichten findet man die Erfolgsrechnung meist in Kontoform.',correct:'F',explanation:'In Geschäftsberichten wird die Erfolgsrechnung meist in Berichts-/Staffelform dargestellt.'},
+    {text:'Eine einfache Stufung ist die Gliederung in «betrieblich» und «neutral».',correct:'R'}
+  ];
+  return e(TrueFalseExercise,{statements,exId:18,markDone});
+}
+
+// ─── Exercise 19: Bezeichnung für Aufwand bzw. Ertrag ──────────────────────
+
+function Ex19({markDone}){
+  const items = [
+    {text:'Wir zahlen für Arbeitsleistungen unserer Mitarbeitenden, d.h. Löhne und Beiträge an Sozialversicherungen.',ae:'A',bez:['Personalaufwand','Lohnaufwand','Sozialversicherungsaufwand']},
+    {text:'Auf unserem Bankguthaben oder Postguthaben wird Zins gutgeschrieben.',ae:'E',bez:['Finanzertrag','Zinsertrag']},
+    {text:'Wir kaufen und verbrauchen Handelswaren, die unverändert weiterverkauft werden.',ae:'A',bez:['Handelswarenaufwand','Warenaufwand']},
+    {text:'Wir stellen für erbrachte Dienstleistungen (DL) Rechnung oder erhalten dafür sofortige Zahlung.',ae:'E',bez:['Dienstleistungsertrag']},
+    {text:'Wir verbrauchen Material für die Herstellung von Gütern bzw. von Dienstleistungen (falls diese DL Material erfordern).',ae:'A',bez:['Materialaufwand']},
+    {text:'Wir zahlen Miete für Räumlichkeiten.',ae:'A',bez:['Raumaufwand','Mietaufwand']},
+    {text:'Wir zahlen Zins für ein Darlehen. Oder: Die Bank belastet uns Zins für Schulden auf unserem Bankkonto.',ae:'A',bez:['Finanzaufwand','Zinsaufwand']},
+    {text:'Wir verkaufen Handelswaren gegen bar oder auf Kredit (gegen Rechnung).',ae:'E',bez:['Handelserlös','Warenertrag','Handelsertrag']},
+    {text:'Wir berücksichtigen den Wertverzehr unserer Anlagegüter durch den Gebrauch sowie die Alterung und schreiben ab.',ae:'A',bez:['Abschreibungen']},
+    {text:'Wir vermieten Räumlichkeiten und erhalten Miete.',ae:'E',bez:['Immobilienertrag','Mietertrag','Liegenschaftsertrag']},
+    {text:'Wir verkaufen Waren (Güter), die wir selbst hergestellt haben (gegen sofortige Zahlung oder gegen Rechnung).',ae:'E',bez:['Produktionserlös','Produktionsertrag']},
+    {text:'Wir zahlen, verbrauchen Elektrizität, Heizöl.',ae:'A',bez:['Energieaufwand']},
+    {text:'Wir müssen Anlagegüter (z.B. Maschinen, Fahrzeuge) warten oder reparieren lassen.',ae:'A',bez:['Unterhalt und Reparaturen','URE','Unterhalt']},
+    {text:'Wir stellen, verbrauchen Güter und Dienstleistungen in der Verwaltung (Büromaterial, Briefporto, Telekommunikation, Beratung, Dokumentation usw.).',ae:'A',bez:['Verwaltungsaufwand']},
+    {text:'Wir zahlen für Inserate, Prospekte, Radio- oder TV-Spots, Schaufensterdekorationen usw.',ae:'A',bez:['Werbeaufwand']},
+    {text:'Wir haben übrigen (sonstigen) Aufwand für die betriebliche Tätigkeit, für den wir kein spezielles Aufwandkonto vorgesehen.',ae:'A',bez:['Sonstiger betrieblicher Aufwand','übriger betrieblicher Aufwand']},
+    {text:'Wir haben übrigen (sonstigen) Ertrag im Betrieb, der nicht mit dem Verkauf von Kernleistungen zu tun haben.',ae:'E',bez:['Sonstiger betrieblicher Ertrag','übriger betrieblicher Ertrag']},
+    {text:'Wir haben Erträge, die nicht mit dem Betrieb zu tun haben.',ae:'E',bez:['Betriebsfremder Ertrag','ausserordentlicher Ertrag']},
+    {text:'Wir haben Aufwendungen, die von der Art her ausserordentlich, einmalig und/oder periodenfremd sind.',ae:'A',bez:['Ausserordentlicher Aufwand']}
+  ];
+
+  const [aeAnswers, setAeAnswers] = useState(Array(items.length).fill(''));
+  const [bezAnswers, setBezAnswers] = useState(Array(items.length).fill(''));
+  const [checked, setChecked] = useState(false);
+  const [showSol, setShowSol] = useState(false);
+
+  function check(){
+    setChecked(true);
+    let correct = 0;
+    items.forEach((it,i)=>{
+      if(aeAnswers[i]===it.ae) correct++;
+      if(it.bez.some(b=>normalize(bezAnswers[i]).indexOf(normalize(b))!==-1)) correct++;
+    });
+    markDone(19, Math.round(correct/(items.length*2)*100));
+  }
+  function reset(){setAeAnswers(Array(items.length).fill(''));setBezAnswers(Array(items.length).fill(''));setChecked(false);setShowSol(false)}
+
+  return e('div',null,
+    e('div',{className:'ex-instruction'},'Bestimmen Sie, ob es sich um Aufwand (A) oder Ertrag (E) handelt, und geben Sie die buchhalterische Bezeichnung an.'),
+    e('table',{className:'check-table'},
+      e('thead',null,e('tr',null,
+        e('th',null,'Nr.'),e('th',null,'Beschreibung'),e('th',null,'A/E'),e('th',null,'Bezeichnung')
+      )),
+      e('tbody',null,items.map((it,i)=>{
+        const aeOk = checked && aeAnswers[i]===it.ae;
+        const aeWrong = checked && aeAnswers[i] && aeAnswers[i]!==it.ae;
+        const bezOk = checked && it.bez.some(b=>normalize(bezAnswers[i]).indexOf(normalize(b))!==-1);
+        const bezWrong = checked && bezAnswers[i] && !bezOk;
+        return e('tr',{key:i,className:checked?(aeOk&&bezOk?'correct-row':'wrong-row'):''},
+          e('td',null,i+1),
+          e('td',{style:{textAlign:'left',fontSize:'.8rem'}},it.text),
+          e('td',null,
+            e('label',{style:{marginRight:6}},
+              e('input',{type:'radio',name:'ae19_'+i,value:'A',checked:aeAnswers[i]==='A',
+                onChange:()=>{const n=[...aeAnswers];n[i]='A';setAeAnswers(n)},disabled:checked}),' A'
+            ),
+            e('label',null,
+              e('input',{type:'radio',name:'ae19_'+i,value:'E',checked:aeAnswers[i]==='E',
+                onChange:()=>{const n=[...aeAnswers];n[i]='E';setAeAnswers(n)},disabled:checked}),' E'
+            )
+          ),
+          e('td',null,e('input',{
+            type:'text',className:'blank-input'+(checked?(bezOk?' correct':' wrong'):''),
+            value:bezAnswers[i],
+            onChange:ev=>{const n=[...bezAnswers];n[i]=ev.target.value;setBezAnswers(n)},
+            disabled:checked,style:{width:'180px'}
+          }))
+        );
+      }))
+    ),
+    e('div',{className:'btn-row'},
+      !checked?e('button',{className:'btn btn-primary',onClick:check},'Prüfen'):null,
+      checked?e('button',{className:'btn btn-secondary',onClick:()=>setShowSol(!showSol)},showSol?'Lösung ausblenden':'Lösung anzeigen'):null,
+      checked?e('button',{className:'btn btn-reset',onClick:reset},'Zurücksetzen'):null
+    ),
+    checked?e('div',{style:{marginTop:12}},
+      e('span',{className:'score-badge '+(items.every((it,i)=>aeAnswers[i]===it.ae&&it.bez.some(b=>normalize(bezAnswers[i]).indexOf(normalize(b))!==-1))?'good':'bad')},
+        (()=>{let c=0;items.forEach((it,i)=>{if(aeAnswers[i]===it.ae)c++;if(it.bez.some(b=>normalize(bezAnswers[i]).indexOf(normalize(b))!==-1))c++});return c+'/'+(items.length*2)+' richtig'})()
+      )
+    ):null,
+    showSol?e('div',{className:'solution-box'},
+      items.map((it,i)=>e('div',{key:i,style:{marginBottom:4}},
+        e('strong',null,(i+1)+'. '),it.ae+' – '+it.bez[0]
+      ))
+    ):null
+  );
+}
+
+// ─── Exercise 20: Das Geschäft eines Unternehmens abbilden ─────────────────
+
+function Ex20({markDone}){
+  const branches = [
+    {name:'Handelsunternehmen',desc:'kaufen Waren und verkaufen sie weiter',ertrag:['Warenertrag','Handelserlöse','Handelserlös'],aufwand:['Warenaufwand','Personalaufwand','Raumaufwand','Verwaltungsaufwand','Werbeaufwand','Abschreibungen']},
+    {name:'Industrieunternehmen',desc:'Produktionsunternehmen, kaufen Rohmaterial, stellen Produkte her',ertrag:['Produktionserlöse','Produktionserlös'],aufwand:['Materialaufwand','Personalaufwand','Energieaufwand','Abschreibungen','Raumaufwand']},
+    {name:'Dienstleistungsunternehmen',desc:'',ertrag:['Dienstleistungserlöse','Dienstleistungsertrag','Dienstleistungserlös'],aufwand:['Personalaufwand','Raumaufwand','Informatikaufwand','Verwaltungsaufwand']},
+    {name:'Transportunternehmen',desc:'',ertrag:['Transportertrag'],aufwand:['Treibstoffaufwand','Fahrzeugaufwand','Personalaufwand','Versicherungsaufwand']},
+    {name:'Beratungsunternehmen (Treuhand)',desc:'',ertrag:['Dienstleistungserlöse','Honorarertrag','Dienstleistungserlös'],aufwand:['Personalaufwand','Raumaufwand','Informatikaufwand']},
+    {name:'Gastgewerbe (Restaurants, Hotels)',desc:'',ertrag:['Dienstleistungserlöse','Dienstleistungsertrag','Dienstleistungserlös'],aufwand:['Warenaufwand','Personalaufwand','Raumaufwand']},
+    {name:'Banken',desc:'',ertrag:['Zinsertrag','Kommissionsertrag'],aufwand:['Zinsaufwand','Personalaufwand','Verwaltungsaufwand']},
+    {name:'Versicherungen',desc:'',ertrag:['Prämienertrag'],aufwand:['Schadenaufwand','Personalaufwand','Verwaltungsaufwand']},
+    {name:'Kleinere/mittlere KMU (Kombination)',desc:'',ertrag:['je nach Branche'],aufwand:['je nach Branche']}
+  ];
+
+  const [ertragInputs, setErtragInputs] = useState(Array(branches.length).fill(''));
+  const [aufwandInputs, setAufwandInputs] = useState(Array(branches.length).fill(''));
+  const [checked, setChecked] = useState(false);
+  const [showSol, setShowSol] = useState(false);
+
+  function check(){
+    setChecked(true);
+    let score = 0;
+    branches.forEach((br,i)=>{
+      const ei = normalize(ertragInputs[i]);
+      const ai = normalize(aufwandInputs[i]);
+      if(br.ertrag.some(k=>ei.indexOf(normalize(k))!==-1)) score++;
+      if(br.aufwand.some(k=>ai.indexOf(normalize(k))!==-1)) score++;
+    });
+    markDone(20, Math.round(score/(branches.length*2)*100));
+  }
+  function reset(){setErtragInputs(Array(branches.length).fill(''));setAufwandInputs(Array(branches.length).fill(''));setChecked(false);setShowSol(false)}
+
+  return e('div',null,
+    e('div',{className:'ex-instruction'},'Geben Sie für jede Branche typische Ertrags- und Aufwandsposten ein.'),
+    branches.map((br,i)=>e('div',{key:i,className:'sub-q'},
+      e('div',{style:{fontWeight:600,marginBottom:8}},br.name+(br.desc?' ('+br.desc+')':'')),
+      e('div',{style:{marginBottom:6}},
+        e('label',{style:{fontSize:'.8rem',fontWeight:500}},'Ertragsposten:'),
+        e('textarea',{className:'text-input',rows:2,value:ertragInputs[i],
+          onChange:ev=>{const n=[...ertragInputs];n[i]=ev.target.value;setErtragInputs(n)},
+          disabled:checked,placeholder:'z.B. Warenertrag, ...'})
+      ),
+      e('div',null,
+        e('label',{style:{fontSize:'.8rem',fontWeight:500}},'Aufwandsposten:'),
+        e('textarea',{className:'text-input',rows:2,value:aufwandInputs[i],
+          onChange:ev=>{const n=[...aufwandInputs];n[i]=ev.target.value;setAufwandInputs(n)},
+          disabled:checked,placeholder:'z.B. Personalaufwand, ...'})
+      ),
+      checked?e('div',{className:'feedback ok',style:{marginTop:6}},
+        e('strong',null,'Musterantwort: '),
+        'Ertrag: '+br.ertrag.join(', ')+' | Aufwand: '+br.aufwand.join(', ')
+      ):null
+    )),
+    e('div',{className:'btn-row'},
+      !checked?e('button',{className:'btn btn-primary',onClick:check},'Prüfen'):null,
+      checked?e('button',{className:'btn btn-secondary',onClick:()=>setShowSol(!showSol)},showSol?'Lösung ausblenden':'Lösung anzeigen'):null,
+      checked?e('button',{className:'btn btn-reset',onClick:reset},'Zurücksetzen'):null
+    ),
+    showSol?e('div',{className:'solution-box'},
+      branches.map((br,i)=>e('div',{key:i,style:{marginBottom:8}},
+        e('strong',null,br.name+': '),
+        'Ertrag: '+br.ertrag.join(', ')+' | Aufwand: '+br.aufwand.join(', ')
+      ))
+    ):null
+  );
+}
+
+// ─── Exercise 21: Erstellen der Erfolgsrechnung ────────────────────────────
+
+function ERCalcSub({label, positions, totalAufwand, totalErtrag, result, resultLabel, subId, markDone, exId}){
+  const [inputs, setInputs] = useState({aufwand:'',ertrag:'',result:''});
+  const [checked, setChecked] = useState(false);
+  const [showSol, setShowSol] = useState(false);
+  const tol = 100;
+
+  function check(){
+    setChecked(true);
+    let c=0;
+    if(Math.abs(parseFloat(inputs.aufwand.replace(/'/g,''))-totalAufwand)<=tol) c++;
+    if(Math.abs(parseFloat(inputs.ertrag.replace(/'/g,''))-totalErtrag)<=tol) c++;
+    if(Math.abs(parseFloat(inputs.result.replace(/'/g,''))-Math.abs(result))<=tol) c++;
+    return c;
+  }
+  function reset(){setInputs({aufwand:'',ertrag:'',result:''});setChecked(false);setShowSol(false)}
+  function numOk(val,target){return checked && Math.abs(parseFloat((val||'0').replace(/'/g,''))-target)<=tol}
+
+  return e('div',{className:'sub-q'},
+    e('div',{className:'section-title'},label),
+    e('div',{style:{marginBottom:12}},
+      e('div',{style:{fontWeight:500,fontSize:'.85rem',marginBottom:8}},'Positionen (alphabetisch):'),
+      positions.map((p,i)=>e('div',{key:i,style:{fontSize:'.85rem',padding:'2px 0'}},p.name+': CHF '+p.val.toLocaleString('de-CH')))
+    ),
+    e('div',{className:'calc-row'},
+      e('span',{className:'calc-label'},'Total Aufwand:'),
+      e('input',{className:'calc-input'+(checked?(numOk(inputs.aufwand,totalAufwand)?' correct':' wrong'):''),
+        value:inputs.aufwand,onChange:ev=>setInputs({...inputs,aufwand:ev.target.value}),disabled:checked,placeholder:'CHF'})
+    ),
+    e('div',{className:'calc-row'},
+      e('span',{className:'calc-label'},'Total Ertrag:'),
+      e('input',{className:'calc-input'+(checked?(numOk(inputs.ertrag,totalErtrag)?' correct':' wrong'):''),
+        value:inputs.ertrag,onChange:ev=>setInputs({...inputs,ertrag:ev.target.value}),disabled:checked,placeholder:'CHF'})
+    ),
+    e('div',{className:'calc-row'},
+      e('span',{className:'calc-label'},resultLabel+':'),
+      e('input',{className:'calc-input'+(checked?(numOk(inputs.result,Math.abs(result))?' correct':' wrong'):''),
+        value:inputs.result,onChange:ev=>setInputs({...inputs,result:ev.target.value}),disabled:checked,placeholder:'CHF'})
+    ),
+    e('div',{className:'btn-row'},
+      !checked?e('button',{className:'btn btn-primary',onClick:()=>{check();setChecked(true)}},'Prüfen'):null,
+      checked?e('button',{className:'btn btn-secondary',onClick:()=>setShowSol(!showSol)},showSol?'Lösung ausblenden':'Lösung anzeigen'):null,
+      checked?e('button',{className:'btn btn-reset',onClick:reset},'Zurücksetzen'):null
+    ),
+    showSol?e('div',{className:'solution-box'},
+      'Total Aufwand: CHF '+totalAufwand.toLocaleString('de-CH')+' | Total Ertrag: CHF '+totalErtrag.toLocaleString('de-CH')+' | '+resultLabel+': CHF '+Math.abs(result).toLocaleString('de-CH')
+    ):null
+  );
+}
+
+function Ex21({markDone}){
+  const subsData = [
+    {label:'A) Architekturbüro',positions:[
+      {name:'Büroaufwand',val:41300},{name:'Fahrzeugaufwand',val:23600},{name:'Finanzertrag',val:2500},{name:'Honorarertrag',val:280000},{name:'Personalaufwand',val:132000},{name:'Übriger Aufwand',val:56000}
+    ],totalAufwand:252900,totalErtrag:282500,result:29600,resultLabel:'Gewinn'},
+    {label:'B) Handelsunternehmen',positions:[
+      {name:'Abschreibungen',val:9000},{name:'Finanzaufwand',val:2100},{name:'Finanzertrag',val:4600},{name:'Personalaufwand',val:75200},{name:'Raumaufwand',val:36000},{name:'Übriger Aufwand',val:14000},{name:'Warenaufwand',val:210500},{name:'Warenertrag',val:335400}
+    ],totalAufwand:346800,totalErtrag:340000,result:-6800,resultLabel:'Verlust'},
+    {label:'C) Motorrad- und Fahrradhandel',positions:[
+      {name:'Abschreibungen',val:19000},{name:'Einkauf Fahrräder',val:150800},{name:'Einkauf Motorräder',val:88700},{name:'Eintausch Occasionen',val:26200},{name:'Erlös aus Reparaturen',val:68400},{name:'Erlös Fahrradverkauf',val:265000},{name:'Erlös Motorradverkauf',val:145700},{name:'Finanzaufwand',val:2100},{name:'Finanzertrag',val:1500},{name:'Materialverbrauch',val:59500},{name:'Mietaufwand',val:30000},{name:'Personalaufwand',val:87000},{name:'Übriger Aufwand',val:17200},{name:'Verkauf Occasionen',val:44500},{name:'Werbung',val:5400}
+    ],totalAufwand:485900,totalErtrag:525100,result:39200,resultLabel:'Gewinn'},
+    {label:'D) Transportunternehmen',positions:[
+      {name:'Abschreibungen',val:30000},{name:'Fahrzeugvermietung',val:20000},{name:'Finanzaufwand',val:5000},{name:'Lohnaufwand',val:80000},{name:'Mietaufwand',val:40000},{name:'Sonstiger Aufwand',val:10000},{name:'Sozialleistungen',val:19000},{name:'Transportertrag',val:310000},{name:'Treibstoffaufwand',val:40000},{name:'Unterhalt und Reparaturen',val:25000},{name:'Versicherungsaufwand',val:30000},{name:'Verwaltungsaufwand',val:15000}
+    ],totalAufwand:294000,totalErtrag:330000,result:36000,resultLabel:'Gewinn'}
+  ];
+
+  const [scores, setScores] = useState({});
+  function subDone(sub,pct){setScores(s=>{const n={...s,[sub]:pct};const vals=Object.values(n);markDone(21,Math.round(vals.reduce((a,b)=>a+b,0)/4));return n})}
+
+  return e('div',null,
+    e('div',{className:'ex-instruction'},'Erstellen Sie die Erfolgsrechnung aus den gegebenen Positionen. Berechnen Sie Total Aufwand, Total Ertrag und das Ergebnis.'),
+    subsData.map((sd,i)=>e(ERCalcSub,{key:i,label:sd.label,positions:sd.positions,totalAufwand:sd.totalAufwand,totalErtrag:sd.totalErtrag,result:sd.result,resultLabel:sd.resultLabel,subId:i,markDone:subDone,exId:21}))
+  );
+}
+
+// ─── Exercise 22: Dreistufige Erfolgsrechnung ──────────────────────────────
+
+function Ex22({markDone}){
+  const [inputs, setInputs] = useState({
+    betrAufwand:'',betrErtrag:'',betriebsgewinn:'',
+    neutrAufwand:'',neutrErtrag:'',neutralerErfolg:'',
+    aoAufwand:'',aoErtrag:'',aoErfolg:'',
+    unternehmensgewinn:''
+  });
+  const [checked, setChecked] = useState(false);
+  const [showSol, setShowSol] = useState(false);
+  const tol = 100;
+
+  const sol = {betrAufwand:153100,betrErtrag:170000,betriebsgewinn:16900,
+    neutrAufwand:9200,neutrErtrag:10700,neutralerErfolg:1500,
+    aoAufwand:900,aoErtrag:0,aoErfolg:-900,
+    unternehmensgewinn:17500};
+
+  function pn(v){return parseFloat((v||'0').replace(/'/g,'').replace(/−/g,'-'))}
+  function numOk(key){return Math.abs(pn(inputs[key])-sol[key])<=tol}
+  function cls(key){return 'calc-input'+(checked?(numOk(key)?' correct':' wrong'):'')}
+  function ch(key,v){setInputs(i=>({...i,[key]:v}))}
+
+  function check(){
+    setChecked(true);
+    const keys = Object.keys(sol);
+    const correct = keys.filter(k=>numOk(k)).length;
+    markDone(22, Math.round(correct/keys.length*100));
+  }
+  function reset(){setInputs({betrAufwand:'',betrErtrag:'',betriebsgewinn:'',neutrAufwand:'',neutrErtrag:'',neutralerErfolg:'',aoAufwand:'',aoErtrag:'',aoErfolg:'',unternehmensgewinn:''});setChecked(false);setShowSol(false)}
+
+  return e('div',null,
+    e('div',{className:'ex-instruction'},'Einzelunternehmen F. Mauser, Lederwaren. Erstellen Sie eine dreistufige Erfolgsrechnung in Kontoform. Liegenschaften und Wertschriften = neutral.'),
+    e('div',{style:{fontSize:'.85rem',marginBottom:16,lineHeight:1.6}},
+      e('strong',null,'Positionen (alphabetisch): '),'Abschreibungen 3\'500, ausserordentlicher Aufwand (Lagerverlust) 900, Finanzaufwand 1\'800, Liegenschaftsaufwand 7\'400, Liegenschaftsertrag 9\'500, Löhne und Gehälter 21\'000, Miete 4\'500, übriger Betriebsaufwand 1\'600, Verwaltungsaufwand 2\'500, Warenaufwand 120\'000, Warenertrag 170\'000, Wertschriftenerfolg 1\'200.'
+    ),
+    e('div',{style:{fontWeight:700,fontSize:'.95rem',marginBottom:8,color:'var(--accent)'}},'Stufe 1: Betrieblich'),
+    e('div',{className:'calc-row'},e('span',{className:'calc-label'},'Betrieblicher Aufwand:'),e('input',{className:cls('betrAufwand'),value:inputs.betrAufwand,onChange:ev=>ch('betrAufwand',ev.target.value),disabled:checked,placeholder:'CHF'})),
+    e('div',{className:'calc-row'},e('span',{className:'calc-label'},'Betrieblicher Ertrag:'),e('input',{className:cls('betrErtrag'),value:inputs.betrErtrag,onChange:ev=>ch('betrErtrag',ev.target.value),disabled:checked,placeholder:'CHF'})),
+    e('div',{className:'calc-row',style:{fontWeight:600}},e('span',{className:'calc-label'},'Betriebsgewinn:'),e('input',{className:cls('betriebsgewinn'),value:inputs.betriebsgewinn,onChange:ev=>ch('betriebsgewinn',ev.target.value),disabled:checked,placeholder:'CHF'})),
+
+    e('div',{style:{fontWeight:700,fontSize:'.95rem',marginTop:16,marginBottom:8,color:'var(--accent)'}},'Stufe 2: Neutral'),
+    e('div',{className:'calc-row'},e('span',{className:'calc-label'},'Neutraler Aufwand:'),e('input',{className:cls('neutrAufwand'),value:inputs.neutrAufwand,onChange:ev=>ch('neutrAufwand',ev.target.value),disabled:checked,placeholder:'CHF'})),
+    e('div',{className:'calc-row'},e('span',{className:'calc-label'},'Neutraler Ertrag:'),e('input',{className:cls('neutrErtrag'),value:inputs.neutrErtrag,onChange:ev=>ch('neutrErtrag',ev.target.value),disabled:checked,placeholder:'CHF'})),
+    e('div',{className:'calc-row',style:{fontWeight:600}},e('span',{className:'calc-label'},'Neutraler Erfolg:'),e('input',{className:cls('neutralerErfolg'),value:inputs.neutralerErfolg,onChange:ev=>ch('neutralerErfolg',ev.target.value),disabled:checked,placeholder:'CHF'})),
+
+    e('div',{style:{fontWeight:700,fontSize:'.95rem',marginTop:16,marginBottom:8,color:'var(--accent)'}},'Stufe 3: Ausserordentlich'),
+    e('div',{className:'calc-row'},e('span',{className:'calc-label'},'A.o. Aufwand:'),e('input',{className:cls('aoAufwand'),value:inputs.aoAufwand,onChange:ev=>ch('aoAufwand',ev.target.value),disabled:checked,placeholder:'CHF'})),
+    e('div',{className:'calc-row'},e('span',{className:'calc-label'},'A.o. Ertrag:'),e('input',{className:cls('aoErtrag'),value:inputs.aoErtrag,onChange:ev=>ch('aoErtrag',ev.target.value),disabled:checked,placeholder:'CHF'})),
+    e('div',{className:'calc-row',style:{fontWeight:600}},e('span',{className:'calc-label'},'A.o. Erfolg:'),e('input',{className:cls('aoErfolg'),value:inputs.aoErfolg,onChange:ev=>ch('aoErfolg',ev.target.value),disabled:checked,placeholder:'CHF'})),
+
+    e('div',{style:{marginTop:16,padding:'12px 16px',background:'var(--hover)',borderRadius:8,fontWeight:700}},
+      e('div',{className:'calc-row'},e('span',{className:'calc-label'},'Unternehmensgewinn:'),e('input',{className:cls('unternehmensgewinn'),value:inputs.unternehmensgewinn,onChange:ev=>ch('unternehmensgewinn',ev.target.value),disabled:checked,placeholder:'CHF'}))
+    ),
+
+    e('div',{className:'btn-row'},
+      !checked?e('button',{className:'btn btn-primary',onClick:check},'Prüfen'):null,
+      checked?e('button',{className:'btn btn-secondary',onClick:()=>setShowSol(!showSol)},showSol?'Lösung ausblenden':'Lösung anzeigen'):null,
+      checked?e('button',{className:'btn btn-reset',onClick:reset},'Zurücksetzen'):null
+    ),
+    showSol?e('div',{className:'solution-box'},
+      e('div',null,e('strong',null,'Stufe 1 – Betrieblich: '),'Aufwand 153\'100 (Warenaufwand 120\'000 + Löhne 21\'000 + Miete 4\'500 + Abschreibungen 3\'500 + Verwaltungsaufwand 2\'500 + übriger Betriebsaufwand 1\'600), Ertrag 170\'000 (Warenertrag)'),
+      e('div',null,e('strong',null,'Betriebsgewinn: '),'16\'900'),
+      e('div',{style:{marginTop:8}},e('strong',null,'Stufe 2 – Neutral: '),'Aufwand 9\'200 (Liegenschaftsaufwand 7\'400 + Finanzaufwand 1\'800), Ertrag 10\'700 (Liegenschaftsertrag 9\'500 + Wertschriftenerfolg 1\'200)'),
+      e('div',null,e('strong',null,'Neutraler Erfolg: '),'1\'500'),
+      e('div',{style:{marginTop:8}},e('strong',null,'Stufe 3 – Ausserordentlich: '),'Aufwand 900 (Lagerverlust), Ertrag 0'),
+      e('div',null,e('strong',null,'A.o. Erfolg: '),'-900'),
+      e('div',{style:{marginTop:8,fontWeight:700}},e('strong',null,'Unternehmensgewinn: '),'17\'500 (16\'900 + 1\'500 − 900)')
+    ):null
+  );
+}
+
+// ─── Exercise 23: Zweistufige Erfolgsrechnung einer Garage ─────────────────
+
+function Ex23({markDone}){
+  const [inputs, setInputs] = useState({
+    bruttoerloes:'',erlmind:'',nettoerloes:'',
+    betrAufwand:'',betriebsergebnis:'',
+    neutrErtrag:'',neutrAufwand:'',neutralErfolg:'',
+    aoErfolg:'',unternehmensgewinn:''
+  });
+  const [checked, setChecked] = useState(false);
+  const [showSol, setShowSol] = useState(false);
+  const tol = 1;
+
+  const sol = {bruttoerloes:1265,erlmind:130,nettoerloes:1135,
+    betrAufwand:974,betriebsergebnis:161,
+    neutrErtrag:65,neutrAufwand:23,neutralErfolg:42,
+    aoErfolg:-70,unternehmensgewinn:133};
+
+  function pn(v){return parseFloat((v||'0').replace(/'/g,'').replace(/−/g,'-'))}
+  function numOk(key){return Math.abs(pn(inputs[key])-sol[key])<=tol}
+  function cls(key){return 'calc-input'+(checked?(numOk(key)?' correct':' wrong'):'')}
+  function ch(key,v){setInputs(i=>({...i,[key]:v}))}
+
+  function check(){
+    setChecked(true);
+    const keys = Object.keys(sol);
+    const correct = keys.filter(k=>numOk(k)).length;
+    markDone(23, Math.round(correct/keys.length*100));
+  }
+  function reset(){setInputs({bruttoerloes:'',erlmind:'',nettoerloes:'',betrAufwand:'',betriebsergebnis:'',neutrErtrag:'',neutrAufwand:'',neutralErfolg:'',aoErfolg:'',unternehmensgewinn:''});setChecked(false);setShowSol(false)}
+
+  return e('div',null,
+    e('div',{className:'ex-instruction'},'Schloss-Garage AG. Erstellen Sie eine mehrstufige Erfolgsrechnung in Berichtsform (alle Werte in CHF 1\'000). Weisen Sie Brutto- und Nettoerlös sowie das Betriebsergebnis aus. Liegenschaften, Wertschriften und Beteiligung = neutral.'),
+    e('div',{style:{fontSize:'.85rem',marginBottom:16,lineHeight:1.6}},
+      e('strong',null,'Positionen (alphabetisch, in CHF 1\'000): '),
+      'Aufwand Autozubehör und Werkstattmaterial 310, Aufwand Treibstoff 270, ausserordentliche Abschreibungen 70, Beteiligungserfolg 10, Betriebs- und Hilfsmaterial 10, Erlös aus Abfallverkauf 5, Erlös Reparaturwerkstatt 580, Erlös Schmier- und Waschservice 60, Erlösminderungen 130, Finanzaufwand 8, Liegenschaftenaufwand 15, Liegenschaftenertrag 25, Löhne und Gehälter 200, ordentliche Abschreibungen 80, Raumaufwand 20, übriger Betriebsaufwand 19, Verkaufserlös Autozubehör 280, Verkaufserlös Treibstoff 340, Verwaltungsaufwand 65, Wertschriftenerfolg 30.'
+    ),
+
+    e('div',{style:{fontWeight:700,fontSize:'.95rem',marginBottom:8,color:'var(--accent)'}},'Erlösberechnung'),
+    e('div',{className:'calc-row'},e('span',{className:'calc-label'},'Bruttoerlös:'),e('input',{className:cls('bruttoerloes'),value:inputs.bruttoerloes,onChange:ev=>ch('bruttoerloes',ev.target.value),disabled:checked,placeholder:'1\'000'})),
+    e('div',{className:'calc-row'},e('span',{className:'calc-label'},'Erlösminderungen:'),e('input',{className:cls('erlmind'),value:inputs.erlmind,onChange:ev=>ch('erlmind',ev.target.value),disabled:checked,placeholder:'1\'000'})),
+    e('div',{className:'calc-row',style:{fontWeight:600}},e('span',{className:'calc-label'},'Nettoerlös:'),e('input',{className:cls('nettoerloes'),value:inputs.nettoerloes,onChange:ev=>ch('nettoerloes',ev.target.value),disabled:checked,placeholder:'1\'000'})),
+
+    e('div',{style:{fontWeight:700,fontSize:'.95rem',marginTop:16,marginBottom:8,color:'var(--accent)'}},'Betriebsergebnis'),
+    e('div',{className:'calc-row'},e('span',{className:'calc-label'},'Betrieblicher Aufwand:'),e('input',{className:cls('betrAufwand'),value:inputs.betrAufwand,onChange:ev=>ch('betrAufwand',ev.target.value),disabled:checked,placeholder:'1\'000'})),
+    e('div',{className:'calc-row',style:{fontWeight:600}},e('span',{className:'calc-label'},'Betriebsergebnis:'),e('input',{className:cls('betriebsergebnis'),value:inputs.betriebsergebnis,onChange:ev=>ch('betriebsergebnis',ev.target.value),disabled:checked,placeholder:'1\'000'})),
+
+    e('div',{style:{fontWeight:700,fontSize:'.95rem',marginTop:16,marginBottom:8,color:'var(--accent)'}},'Neutraler Erfolg'),
+    e('div',{className:'calc-row'},e('span',{className:'calc-label'},'Neutraler Ertrag:'),e('input',{className:cls('neutrErtrag'),value:inputs.neutrErtrag,onChange:ev=>ch('neutrErtrag',ev.target.value),disabled:checked,placeholder:'1\'000'})),
+    e('div',{className:'calc-row'},e('span',{className:'calc-label'},'Neutraler Aufwand:'),e('input',{className:cls('neutrAufwand'),value:inputs.neutrAufwand,onChange:ev=>ch('neutrAufwand',ev.target.value),disabled:checked,placeholder:'1\'000'})),
+    e('div',{className:'calc-row',style:{fontWeight:600}},e('span',{className:'calc-label'},'Neutraler Erfolg:'),e('input',{className:cls('neutralErfolg'),value:inputs.neutralErfolg,onChange:ev=>ch('neutralErfolg',ev.target.value),disabled:checked,placeholder:'1\'000'})),
+
+    e('div',{style:{fontWeight:700,fontSize:'.95rem',marginTop:16,marginBottom:8,color:'var(--accent)'}},'Ausserordentlich'),
+    e('div',{className:'calc-row',style:{fontWeight:600}},e('span',{className:'calc-label'},'A.o. Erfolg:'),e('input',{className:cls('aoErfolg'),value:inputs.aoErfolg,onChange:ev=>ch('aoErfolg',ev.target.value),disabled:checked,placeholder:'1\'000'})),
+
+    e('div',{style:{marginTop:16,padding:'12px 16px',background:'var(--hover)',borderRadius:8,fontWeight:700}},
+      e('div',{className:'calc-row'},e('span',{className:'calc-label'},'Unternehmensgewinn:'),e('input',{className:cls('unternehmensgewinn'),value:inputs.unternehmensgewinn,onChange:ev=>ch('unternehmensgewinn',ev.target.value),disabled:checked,placeholder:'1\'000'}))
+    ),
+
+    e('div',{className:'btn-row'},
+      !checked?e('button',{className:'btn btn-primary',onClick:check},'Prüfen'):null,
+      checked?e('button',{className:'btn btn-secondary',onClick:()=>setShowSol(!showSol)},showSol?'Lösung ausblenden':'Lösung anzeigen'):null,
+      checked?e('button',{className:'btn btn-reset',onClick:reset},'Zurücksetzen'):null
+    ),
+    showSol?e('div',{className:'solution-box'},
+      e('div',null,e('strong',null,'Bruttoerlös: '),'1\'265 (580+60+280+340+5)'),
+      e('div',null,e('strong',null,'Erlösminderungen: '),'130'),
+      e('div',null,e('strong',null,'Nettoerlös: '),'1\'135'),
+      e('div',{style:{marginTop:8}},e('strong',null,'Betrieblicher Aufwand: '),'974 (310+270+10+200+80+20+19+65)'),
+      e('div',null,e('strong',null,'Betriebsergebnis: '),'161'),
+      e('div',{style:{marginTop:8}},e('strong',null,'Neutraler Ertrag: '),'65 (25+30+10), Neutraler Aufwand: 23 (15+8)'),
+      e('div',null,e('strong',null,'Neutraler Erfolg: '),'42'),
+      e('div',{style:{marginTop:8}},e('strong',null,'A.o. Erfolg: '),'-70 (ausserordentliche Abschreibungen)'),
+      e('div',{style:{marginTop:8,fontWeight:700}},e('strong',null,'Unternehmensgewinn: '),'133 (161 + 42 − 70)')
+    ):null
+  );
+}
+
+// ─── Exercise 24: Auswirkungsanalyse ───────────────────────────────────────
+
+function Ex24({markDone}){
+  const transactions = [
+    {text:'Bezahlung der Löhne via Bank',bg:'0',betg:'-',ug:'-'},
+    {text:'Kursgewinne auf Wertschriften werden realisiert',bg:'0',betg:'0',ug:'+'},
+    {text:'Nachträgliche Rabatte auf Wareneinkäufen',bg:'+',betg:'+',ug:'+'},
+    {text:'Zahlung für die Bodenreinigung des Ladenlokals',bg:'0',betg:'-',ug:'-'},
+    {text:'Warenverkäufe auf Kredit (gegen Rechnung)',bg:'+',betg:'+',ug:'+'},
+    {text:'Unterhaltsarbeiten am Gewerbegebäude',bg:'0',betg:'0',ug:'-'},
+    {text:'Abschreibung auf der Ladeneinrichtung',bg:'0',betg:'-',ug:'-'},
+    {text:'Belastung des Mietaufwands und Gutschrift auf der Immobilienrechnung',bg:'0',betg:'-',ug:'0'}
+  ];
+
+  const cols = ['bg','betg','ug'];
+  const colLabels = ['Bruttogewinn','Betriebsgewinn','Unternehmens\u00adgewinn'];
+
+  const [answers, setAnswers] = useState(Array(transactions.length).fill(null).map(()=>({bg:'',betg:'',ug:''})));
+  const [checked, setChecked] = useState(false);
+  const [showSol, setShowSol] = useState(false);
+
+  function sel(row,col,val){
+    setAnswers(a=>{const n=[...a];n[row]={...n[row],[col]:val};return n});
+  }
+
+  function check(){
+    setChecked(true);
+    let correct = 0, total = transactions.length * 3;
+    transactions.forEach((t,i)=>{
+      cols.forEach(c=>{if(answers[i][c]===t[c]) correct++});
+    });
+    markDone(24, Math.round(correct/total*100));
+  }
+  function reset(){setAnswers(Array(transactions.length).fill(null).map(()=>({bg:'',betg:'',ug:''})));setChecked(false);setShowSol(false)}
+
+  return e('div',null,
+    e('div',{className:'ex-instruction'},'Bestimmen Sie für jeden Vorgang die Auswirkung auf die drei Stufenergebnisse: + (erhöht), − (vermindert), 0 (keine Auswirkung).'),
+    e('div',{style:{fontSize:'.85rem',marginBottom:16,padding:12,background:'var(--hover)',borderRadius:8,lineHeight:1.6}},
+      e('strong',null,'Gegebene ER (Kontoform): '),
+      'Warenertrag 1\'200, Warenaufwand 900 → Bruttogewinn 300 | Personalaufwand 200, Raumaufwand 80, Abschreibungen 50, Sonst. betr. Aufwand 20, Sonst. betriebl. Ertrag 100 → Betriebsgewinn 50 | Immobilienertrag/-aufwand, Wertschriftenaufwand → Unternehmensgewinn 160'
+    ),
+    e('table',{className:'check-table'},
+      e('thead',null,e('tr',null,
+        e('th',null,'Vorgang'),
+        colLabels.map((l,i)=>e('th',{key:i},l))
+      )),
+      e('tbody',null,transactions.map((t,i)=>{
+        const rowOk = checked && cols.every(c=>answers[i][c]===t[c]);
+        const rowWrong = checked && !rowOk;
+        return e('tr',{key:i,className:checked?(rowOk?'correct-row':'wrong-row'):''},
+          e('td',{style:{textAlign:'left',fontSize:'.8rem'}},t.text),
+          cols.map((c,ci)=>e('td',{key:ci},
+            ['+','-','0'].map(v=>e('label',{key:v,style:{marginRight:6,cursor:'pointer'}},
+              e('input',{type:'radio',name:'ex24_'+i+'_'+c,value:v,
+                checked:answers[i][c]===v,
+                onChange:()=>sel(i,c,v),
+                disabled:checked,
+                style:{accentColor:checked?(answers[i][c]===v?(v===t[c]?'var(--green)':'var(--red)'):''):''}
+              }),
+              ' ',v
+            ))
+          ))
+        );
+      }))
+    ),
+    e('div',{className:'btn-row'},
+      !checked?e('button',{className:'btn btn-primary',onClick:check},'Prüfen'):null,
+      checked?e('button',{className:'btn btn-secondary',onClick:()=>setShowSol(!showSol)},showSol?'Lösung ausblenden':'Lösung anzeigen'):null,
+      checked?e('button',{className:'btn btn-reset',onClick:reset},'Zurücksetzen'):null
+    ),
+    checked?e('div',{style:{marginTop:12}},
+      e('span',{className:'score-badge '+((()=>{let c=0;transactions.forEach((t,i)=>cols.forEach(col=>{if(answers[i][col]===t[col])c++}));return c===24})()?'good':'bad')},
+        (()=>{let c=0;transactions.forEach((t,i)=>cols.forEach(col=>{if(answers[i][col]===t[col])c++}));return c+'/24 richtig'})()
+      )
+    ):null,
+    showSol?e('div',{className:'solution-box'},
+      e('table',{style:{width:'100%',borderCollapse:'collapse',fontSize:'.8rem'}},
+        e('thead',null,e('tr',null,e('th',{style:{textAlign:'left'}},'Vorgang'),e('th',null,'BG'),e('th',null,'BetrG'),e('th',null,'UG'))),
+        e('tbody',null,transactions.map((t,i)=>e('tr',{key:i},
+          e('td',{style:{textAlign:'left',padding:'4px 6px'}},t.text),
+          e('td',{style:{textAlign:'center',padding:'4px'}},t.bg),
+          e('td',{style:{textAlign:'center',padding:'4px'}},t.betg),
+          e('td',{style:{textAlign:'center',padding:'4px'}},t.ug)
+        )))
+      )
+    ):null
+  );
+}
+
+// ─── Exercise 25: Erfolgsrechnung aus einem Geschäftsbericht ───────────────
+
+function Ex25({markDone}){
+  const questions = [
+    {id:'a',label:'A) Die Erfolgsrechnung ist eine sogenannte Zeitraumrechnung. Lässt sich das aus der dargestellten Erfolgsrechnung entnehmen? Wenn ja, wo?',
+      keywords:['zeitraum','1.1','31.12','spaltenüberschrift','geschäftsjahr','periode'],
+      solution:'Ja, erkennbar an den Spaltenüberschriften: 1.1.-31.12.2016 und 1.1.-31.12.2015. Die ER zeigt die Aufwendungen und Erträge über einen Zeitraum (ein ganzes Geschäftsjahr).'},
+    {id:'b',label:'B) Es gibt Prozentzahlen: Serviceleistung oder obligatorischer Bestandteil einer Erfolgsrechnung?',
+      keywords:['serviceleistung','nicht obligatorisch','freiwillig','anteil','nettoerlös'],
+      solution:'Die Prozentzahlen sind eine Serviceleistung, kein obligatorischer Bestandteil. Sie zeigen den Anteil jeder Position am Nettoerlös (= 100%).'},
+    {id:'c',label:'C) Wie sind die Prozentzahlen zu lesen?',
+      keywords:['anteil','nettoerlös','100%','prozent'],
+      solution:'Die Prozentzahlen zeigen den Anteil jeder Position am Nettoerlös aus Lieferungen und Leistungen (= 100%). Z.B. Materialaufwand und Veränderungen in % des Nettoerlöses.'},
+    {id:'d',label:'D) Die Erläuterungen im Anhang liefern Details. Eine enthält: Mietaufwand / Unterhalt und Reparatur / Fahrzeug- und Transportaufwand / Sachversicherungen / Gebühren / Energie- und Entsorgungsaufwand / Verwaltungsaufwand / Informatikaufwand / Marketingaufwand / Verlust aus Veräusserung von Sachanlagen / Aufwand für F&E / Übriger Betriebsaufwand. Um welche Erläuterung handelt es sich?',
+      keywords:['sonstiger betriebsaufwand','übriger betrieblicher aufwand','kontenklasse 6'],
+      solution:'Es handelt sich um die Erläuterung zum «Sonstiger Betriebsaufwand» bzw. «Übriger betrieblicher Aufwand» (Kontenklasse 6).'},
+    {id:'e',label:'E) Versuchen Sie, die Zwischenergebnisse der Meyer Burger ER den Kontenhauptgruppen KMU zuzuordnen: Bruttoergebnis (KHG 30-49), nach Personalaufwand (KHG 50-59), EBITDA (KHG 60-67), EBIT (KG 690, 695), EBT (Kontenklasse 7, KHG 800-870), Jahresgewinn/-verlust (KHG 89).',
+      keywords:['brutto','personal','ebitda','ebit','ebt','jahres'],
+      solution:'Bruttoergebnis nach Material-/Warenaufwand (KHG 30-49), Bruttoergebnis nach Personalaufwand (KHG 50-59), EBITDA (KHG 60-67), EBIT (KG 690/695), EBT (Kontenklasse 7 + KHG 800-870), Jahresgewinn/-verlust (KHG 89).'},
+    {id:'f',label:'F) In den beiden Jahren 2015 und 2016 ist je ein Verlust zu verzeichnen. Verschlimmert oder verbessert sich die Lage?',
+      keywords:['verbessert','kleiner','richtung','break-even','geringer'],
+      solution:'Die Lage verbessert sich: Der Verlust ist 2016 kleiner als 2015 (sowohl absolut als auch in %). Das Unternehmen bewegt sich in Richtung Break-even.'}
+  ];
+
+  const [answers, setAnswers] = useState({});
+  const [checked, setChecked] = useState(false);
+  const [showSol, setShowSol] = useState(false);
+
+  function check(){
+    setChecked(true);
+    let correct = 0;
+    questions.forEach(q=>{
+      const a = normalize(answers[q.id]||'');
+      if(q.keywords.some(k=>a.indexOf(k)!==-1)) correct++;
+    });
+    markDone(25, Math.round(correct/questions.length*100));
+  }
+  function reset(){setAnswers({});setChecked(false);setShowSol(false)}
+
+  return e('div',null,
+    e('div',{className:'ex-instruction'},'Beantworten Sie die folgenden Fragen zur Erfolgsrechnung aus dem Geschäftsbericht von Meyer Burger.'),
+    questions.map(q=>{
+      const a = normalize(answers[q.id]||'');
+      const ok = checked && q.keywords.some(k=>a.indexOf(k)!==-1);
+      return e('div',{key:q.id,className:'text-q'},
+        e('p',{style:{fontWeight:500}},q.label),
+        e('textarea',{
+          className:'text-input'+(checked?(ok?' correct':' wrong'):''),
+          rows:3,value:answers[q.id]||'',
+          onChange:ev=>setAnswers(a=>({...a,[q.id]:ev.target.value})),
+          disabled:checked,
+          placeholder:'Ihre Antwort...'
+        }),
+        checked?e('div',{className:'feedback '+(ok?'ok':'nok')},
+          ok?'Richtig! Ihre Antwort enthält relevante Schlüsselbegriffe.':'Überprüfen Sie Ihre Antwort. Schlüsselbegriffe: '+q.keywords.join(', ')
+        ):null
+      );
+    }),
+    e('div',{className:'btn-row'},
+      !checked?e('button',{className:'btn btn-primary',onClick:check},'Prüfen'):null,
+      checked?e('button',{className:'btn btn-secondary',onClick:()=>setShowSol(!showSol)},showSol?'Lösung ausblenden':'Lösung anzeigen'):null,
+      checked?e('button',{className:'btn btn-reset',onClick:reset},'Zurücksetzen'):null
+    ),
+    checked?e('div',{style:{marginTop:12}},
+      e('span',{className:'score-badge '+((()=>{let c=0;questions.forEach(q=>{const a=normalize(answers[q.id]||'');if(q.keywords.some(k=>a.indexOf(k)!==-1))c++});return c===questions.length})()?'good':'bad')},
+        (()=>{let c=0;questions.forEach(q=>{const a=normalize(answers[q.id]||'');if(q.keywords.some(k=>a.indexOf(k)!==-1))c++});return c+'/'+questions.length+' richtig'})()
+      )
+    ):null,
+    showSol?e('div',{className:'solution-box'},
+      questions.map(q=>e('div',{key:q.id,style:{marginBottom:12}},
+        e('strong',null,q.id.toUpperCase()+') '),q.solution
+      ))
     ):null
   );
 }
