@@ -105,6 +105,82 @@ input,select,button,textarea{font-family:'Inter',sans-serif}
 .score-badge.bad{background:rgba(220,38,38,.1);color:var(--red)}
 .timer-display{color:#fff;font-size:.9rem;font-weight:500;font-variant-numeric:tabular-nums}
 .footer{text-align:center;padding:24px;font-size:.8rem;color:var(--text2)}
+/* ─── Floating Panels ─────────────────────────────────────────── */
+@keyframes slideUp{from{transform:translateY(100%);opacity:0}to{transform:translateY(0);opacity:1}}
+@keyframes fadeUp{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+.panel-overlay{position:fixed;bottom:16px;z-index:900;background:var(--card);border-radius:16px;box-shadow:0 8px 32px rgba(0,0,0,.2);border:1px solid var(--border);display:flex;flex-direction:column;animation:fadeUp .2s ease}
+.panel-header{padding:12px 16px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center}
+.panel-header b{color:var(--text);font-size:.9rem}
+.panel-close{background:var(--hover);border:none;width:28px;height:28px;border-radius:7px;font-size:13px;cursor:pointer;color:var(--text2);display:flex;align-items:center;justify-content:center}
+.panel-close:hover{background:var(--border)}
+/* Calculator */
+.calc-panel{right:16px;width:300px;max-height:480px}
+.calc-display{padding:12px 16px;text-align:right;font-size:1.6rem;font-weight:800;color:var(--text);font-variant-numeric:tabular-nums;border-bottom:1px solid var(--border);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.calc-prev{padding:4px 16px;text-align:right;font-size:.75rem;color:var(--text2);font-variant-numeric:tabular-nums;height:22px}
+.calc-history{padding:6px 12px;max-height:50px;overflow-y:auto;border-bottom:1px solid var(--border)}
+.calc-history-item{font-size:.7rem;color:var(--text2);font-variant-numeric:tabular-nums;line-height:1.4}
+.calc-grid{display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:6px;padding:8px 12px 14px}
+.calc-btn{border:none;border-radius:10px;font-size:1.1rem;font-weight:600;height:46px;cursor:pointer;display:flex;align-items:center;justify-content:center;font-variant-numeric:tabular-nums;transition:all .12s}
+.calc-btn:active{transform:scale(.95)}
+.calc-btn-num{background:var(--card);color:var(--text);border:1px solid var(--border)}
+.calc-btn-num:hover{background:var(--hover)}
+.calc-btn-op{background:rgba(26,35,50,.06);color:var(--nav);font-weight:700}
+.dark .calc-btn-op{background:rgba(255,255,255,.08);color:var(--text)}
+.calc-btn-op:hover{background:rgba(26,35,50,.12)}
+.calc-btn-eq{background:var(--nav);color:#fff;font-weight:700}
+.dark .calc-btn-eq{background:var(--accent);color:#fff}
+.calc-btn-eq:hover{opacity:.9}
+.calc-btn-fn{background:rgba(59,130,246,.08);color:var(--accent);font-weight:700}
+.calc-btn-fn:hover{background:rgba(59,130,246,.15)}
+.calc-btn-span2{grid-column:span 2}
+/* Notes */
+.notes-panel{left:50%;transform:translateX(-50%);width:380px;max-height:420px}
+.notes-body{flex:1;padding:8px 12px 12px}
+.notes-body textarea{width:100%;height:100%;min-height:260px;padding:10px 12px;border-radius:10px;border:1px solid var(--border);background:var(--input-bg);color:var(--text);font-size:.85rem;line-height:1.6;font-family:'Inter',sans-serif;resize:none;box-sizing:border-box;outline:none}
+.notes-body textarea:focus{border-color:var(--accent)}
+.notes-meta{font-size:.7rem;color:var(--text2)}
+/* Glossary */
+.glossary-panel{left:16px;width:300px;max-height:400px}
+/* Kontenrahmen */
+.kr-panel{right:16px;width:420px;max-height:80vh}
+.kr-search{padding:8px 12px 0}
+.kr-search input{width:100%;padding:8px 12px;border-radius:8px;border:1px solid var(--border);background:var(--input-bg);color:var(--text);font-size:.8rem;box-sizing:border-box;outline:none}
+.kr-search input:focus{border-color:var(--accent)}
+.kr-tabs{display:flex;gap:4px;padding:8px 12px 4px;overflow-x:auto;flex-shrink:0}
+.kr-tab{padding:4px 10px;border-radius:6px;border:1px solid var(--border);background:var(--input-bg);color:var(--text2);font-size:.7rem;font-weight:600;cursor:pointer;white-space:nowrap;transition:all .15s}
+.kr-tab:hover{border-color:var(--accent)}
+.kr-tab.active{background:var(--accent);color:#fff;border-color:var(--accent)}
+.kr-list{padding:6px 12px 12px;flex:1;overflow-y:auto}
+.kr-class-header{font-size:.75rem;font-weight:700;color:var(--accent);padding:8px 0 4px;border-bottom:1px solid var(--border);margin-top:8px;position:sticky;top:0;background:var(--card);z-index:1}
+.kr-group{padding:4px 0 2px;font-size:.72rem;font-weight:600;color:var(--text);margin-top:4px}
+.kr-account{display:flex;gap:8px;padding:3px 8px;border-radius:4px;font-size:.72rem;line-height:1.3;transition:background .1s}
+.kr-account:hover{background:var(--hover)}
+.kr-num{color:var(--accent);font-weight:700;min-width:36px;font-variant-numeric:tabular-nums}
+.kr-name{color:var(--text);flex:1}
+.kr-alt{color:var(--text2);font-style:italic;font-size:.68rem}
+.kr-note{font-size:.65rem;color:var(--text2);padding:2px 8px 4px;line-height:1.3;font-style:italic}
+.glossary-search{padding:6px 12px 0}
+.glossary-search input{width:100%;padding:7px 10px;border-radius:7px;border:1px solid var(--border);background:var(--input-bg);color:var(--text);font-size:.8rem;box-sizing:border-box;outline:none}
+.glossary-search input:focus{border-color:var(--accent)}
+.glossary-list{padding:6px 12px 12px;flex:1;overflow-y:auto}
+.glossary-item{padding:6px 8px;margin-bottom:4px;border-radius:6px;background:var(--input-bg);border-left:3px solid var(--nav)}
+.dark .glossary-item{border-left-color:var(--accent)}
+.glossary-item-title{color:var(--nav);font-weight:700;font-size:.75rem}
+.dark .glossary-item-title{color:var(--accent)}
+.glossary-item-desc{color:var(--text2);font-size:.7rem;line-height:1.4}
+/* Toolbar buttons */
+.tool-bar{display:flex;gap:6px;flex-wrap:wrap;margin-left:auto}
+.tool-btn{padding:6px 12px;border-radius:8px;border:1.5px solid rgba(255,255,255,.2);background:rgba(255,255,255,.07);color:#fff;font-size:.75rem;font-weight:600;cursor:pointer;transition:all .15s;white-space:nowrap}
+.tool-btn:hover{background:rgba(255,255,255,.15)}
+.tool-btn.active{background:rgba(255,255,255,.2);border-color:rgba(255,255,255,.4)}
+@media(max-width:640px){
+  .panel-overlay{bottom:0;border-radius:16px 16px 0 0;left:0!important;right:0!important;width:100%!important;transform:none!important;animation:slideUp .2s ease}
+  .calc-panel{right:0;max-height:70vh}
+  .notes-panel{max-height:60vh}
+  .notes-body textarea{min-height:180px}
+  .glossary-panel{max-height:50vh}
+  .kr-panel{max-height:75vh}
+}
 .drag-item{background:var(--input-bg);border:1px solid var(--border);border-radius:6px;padding:8px 12px;font-size:.85rem;cursor:pointer;transition:all .2s;display:inline-block;margin:4px}
 .drag-item:hover{border-color:var(--accent);background:var(--hover)}
 .drag-item.placed{opacity:.4}
@@ -148,6 +224,332 @@ function matchAnswer(input, answers){
 function loadProgress(){try{return JSON.parse(localStorage.getItem('rw-progress'))||{}}catch(e){return{}}}
 function saveProgress(p){localStorage.setItem('rw-progress', JSON.stringify(p))}
 
+// ─── Glossary Data ──────────────────────────────────────────────────────────
+const GLOSSAR = [
+  {t:'Aktiven',d:'Linke Bilanzseite. Zeigt das Vermögen des Unternehmens.'},
+  {t:'Passiven',d:'Rechte Bilanzseite. Zeigt die Finanzierung (FK + EK).'},
+  {t:'Umlaufvermögen (UV)',d:'Kurzfristige Vermögenswerte: Kasse, Bank, Forderungen, Vorräte.'},
+  {t:'Anlagevermögen (AV)',d:'Langfristige Vermögenswerte: Immobilien, Maschinen, Fahrzeuge.'},
+  {t:'Fremdkapital (FK)',d:'Schulden des Unternehmens: Verbindlichkeiten, Darlehen, Hypotheken.'},
+  {t:'Eigenkapital (EK)',d:'Eigene Mittel: Aktienkapital, Reserven, Gewinnvortrag.'},
+  {t:'Bilanz',d:'Gegenüberstellung von Vermögen und Kapital zu einem Stichtag.'},
+  {t:'Bilanzsumme',d:'Total Aktiven = Total Passiven.'},
+  {t:'Erfolgsrechnung',d:'Zeigt Aufwand und Ertrag einer Periode. Ergebnis = Gewinn/Verlust.'},
+  {t:'Finanzbuchhaltung',d:'Externer Abschluss mit Bilanz und Erfolgsrechnung.'},
+  {t:'Betriebsbuchhaltung',d:'Interner Abschluss, dient der Unternehmensführung.'},
+  {t:'Nebenbuchhaltungen',d:'Hilfsbuchhaltungen: Debitoren, Kreditoren, Lohn.'},
+  {t:'Debitorenbuchhaltung',d:'Erfasst offene Forderungen gegenüber Kunden.'},
+  {t:'Kreditorenbuchhaltung',d:'Erfasst offene Verbindlichkeiten gegenüber Lieferanten.'},
+  {t:'Lohnbuchhaltung',d:'Abrechnung von Löhnen und Sozialversicherungen.'},
+  {t:'Geldflussrechnung',d:'Dritte Abschlussrechnung. Zeigt Liquiditätsveränderung.'},
+  {t:'Inventar',d:'Detaillierte Bestandsaufnahme aller Vermögens- und Schuldenposten.'},
+  {t:'Liquidität',d:'Fähigkeit, Zahlungsverpflichtungen fristgerecht zu erfüllen.'},
+  {t:'Flüssige Mittel',d:'Kasse + Post + Bankguthaben.'},
+  {t:'Forderungen aus L+L',d:'Offene Rechnungen an Kunden (Debitoren).'},
+  {t:'Verbindlichkeiten aus L+L',d:'Offene Rechnungen von Lieferanten (Kreditoren).'},
+  {t:'Hypothek',d:'Darlehen, besichert durch Grundpfand (Liegenschaft).'},
+  {t:'Goldene Bilanzregel',d:'Langfristiges Kapital ≥ Anlagevermögen.'},
+  {t:'Nettoumlaufvermögen',d:'UV − kurzfristiges FK. Sollte positiv sein.'},
+  {t:'Fertigfabrikate',d:'Fertig produzierte Erzeugnisse, bereit zum Verkauf.'},
+  {t:'Halbfabrikate',d:'Noch nicht fertiggestellte Zwischenprodukte.'},
+  {t:'Rückstellungen',d:'Verbindlichkeiten mit unsicherem Betrag oder Zeitpunkt.'},
+  {t:'Wertschriften',d:'Kurzfristige Finanzanlagen (Aktien, Obligationen).'},
+  {t:'Deckungsbeitrag',d:'Verkaufspreis − variable Kosten.'},
+  {t:'Abschreibung',d:'Wertminderung von Anlagevermögen über die Nutzungsdauer.'},
+  {t:'Kennzahlen',d:'Rentabilität, Liquidität, Deckungsgrade, Umschlagsziffern.'},
+  {t:'Bilanzanalyse',d:'Auswertung der Bilanz und Erfolgsrechnung mit Kennzahlen.'}
+];
+
+// ─── Calculator Panel ───────────────────────────────────────────────────────
+function CalcPanel({onClose}){
+  const [disp,setDisp]=useState('0');
+  const [prev,setPrev]=useState(null);
+  const [op,setOp]=useState(null);
+  const [fresh,setFresh]=useState(true);
+  const [hist,setHist]=useState([]);
+  function num(n){if(fresh){setDisp(String(n));setFresh(false)}else{setDisp(disp==='0'?String(n):disp+n)}}
+  function dec(){if(fresh){setDisp('0.');setFresh(false)}else if(disp.indexOf('.')===-1)setDisp(disp+'.')}
+  function oper(o){var cur=parseFloat(disp);if(prev!==null&&op&&!fresh){var r=calc(prev,cur,op);setDisp(String(Math.round(r*1e8)/1e8));setPrev(r);setHist(h=>[...h,prev+' '+op+' '+cur+' = '+Math.round(r*1e8)/1e8])}else{setPrev(cur)}setOp(o);setFresh(true)}
+  function calc(a,b,o){if(o==='+')return a+b;if(o==='\u2212')return a-b;if(o==='\u00d7')return a*b;if(o==='\u00f7')return b!==0?a/b:0;return b}
+  function eq(){if(prev===null||!op)return;var cur=parseFloat(disp);var r=calc(prev,cur,op);setHist(h=>[...h,prev+' '+op+' '+cur+' = '+Math.round(r*1e8)/1e8]);setDisp(String(Math.round(r*1e8)/1e8));setPrev(null);setOp(null);setFresh(true)}
+  function cl(){setDisp('0');setPrev(null);setOp(null);setFresh(true)}
+  function pct(){setDisp(String(Math.round(parseFloat(disp)/100*1e8)/1e8))}
+  function sign(){setDisp(String(parseFloat(disp)*-1))}
+  function b(label,action,cls){return e('button',{className:'calc-btn '+cls,onClick:action},label)}
+  return e('div',{className:'panel-overlay calc-panel'},
+    e('div',{className:'panel-header'},e('b',null,'\ud83e\uddc2 Taschenrechner'),e('button',{className:'panel-close',onClick:onClose},'\u2715')),
+    hist.length>0?e('div',{className:'calc-history'},hist.slice(-3).map((h,i)=>e('div',{key:i,className:'calc-history-item'},h))):null,
+    e('div',{className:'calc-display'},disp),
+    e('div',{className:'calc-prev'},prev!==null&&op?(prev+' '+op):''),
+    e('div',{className:'calc-grid'},
+      b('AC',cl,'calc-btn-fn'),b('\u00b1',sign,'calc-btn-op'),b('%',pct,'calc-btn-op'),b('\u00f7',()=>oper('\u00f7'),'calc-btn-op'),
+      b('7',()=>num('7'),'calc-btn-num'),b('8',()=>num('8'),'calc-btn-num'),b('9',()=>num('9'),'calc-btn-num'),b('\u00d7',()=>oper('\u00d7'),'calc-btn-op'),
+      b('4',()=>num('4'),'calc-btn-num'),b('5',()=>num('5'),'calc-btn-num'),b('6',()=>num('6'),'calc-btn-num'),b('\u2212',()=>oper('\u2212'),'calc-btn-op'),
+      b('1',()=>num('1'),'calc-btn-num'),b('2',()=>num('2'),'calc-btn-num'),b('3',()=>num('3'),'calc-btn-num'),b('+',()=>oper('+'),'calc-btn-op'),
+      b('0',()=>num('0'),'calc-btn-num calc-btn-span2'),b('.',dec,'calc-btn-num'),b('=',eq,'calc-btn-eq')
+    )
+  );
+}
+
+// ─── Notes Panel ────────────────────────────────────────────────────────────
+function NotesPanel({onClose, notes, setNotes}){
+  return e('div',{className:'panel-overlay notes-panel'},
+    e('div',{className:'panel-header'},
+      e('b',null,'\ud83d\udcdd Notizen'),
+      e('div',{style:{display:'flex',gap:8,alignItems:'center'}},
+        e('span',{className:'notes-meta'},notes.length+' Zeichen'),
+        e('button',{className:'panel-close',onClick:onClose},'\u2715')
+      )
+    ),
+    e('div',{className:'notes-body'},
+      e('textarea',{value:notes,onChange:ev=>setNotes(ev.target.value),placeholder:'Notizen, Berechnungen, Stichworte\u2026'})
+    )
+  );
+}
+
+// ─── Glossary Panel ─────────────────────────────────────────────────────────
+function GlossaryPanel({onClose}){
+  const [search,setSearch]=useState('');
+  const filtered=GLOSSAR.filter(g=>g.t.toLowerCase().indexOf(search.toLowerCase())>=0||g.d.toLowerCase().indexOf(search.toLowerCase())>=0);
+  return e('div',{className:'panel-overlay glossary-panel'},
+    e('div',{className:'panel-header'},e('b',null,'\ud83d\udcd6 Glossar'),e('button',{className:'panel-close',onClick:onClose},'\u2715')),
+    e('div',{className:'glossary-search'},e('input',{value:search,onChange:ev=>setSearch(ev.target.value),placeholder:'Suchen\u2026'})),
+    e('div',{className:'glossary-list'},filtered.map((g,i)=>e('div',{key:i,className:'glossary-item'},
+      e('div',{className:'glossary-item-title'},g.t),
+      e('div',{className:'glossary-item-desc'},g.d)
+    )))
+  );
+}
+
+// ─── Kontenrahmen KMU Data ───────────────────────────────────────────────────
+const KR_DATA = [
+  {cls:1,clsName:'Aktiven',groups:[
+    {grp:'10',name:'Umlaufvermögen (UV)',accounts:[
+      {sub:'100',subName:'Flüssige Mittel',items:[
+        {nr:'1000',n:'Kasse'},{nr:'1010',n:'Post'},{nr:'1020',n:'Bankguthaben',alt:'Bank 1'},{nr:'1045',n:'Kreditkarten / Debitkarten'}
+      ]},
+      {sub:'106',subName:'Kurzfristig gehaltene Aktiven mit Börsenkurs',items:[
+        {nr:'1060',n:'Wertschriften',alt:'kurzfristig'}
+      ]},
+      {sub:'110',subName:'Forderungen aus Lieferungen und Leistungen',items:[
+        {nr:'1100',n:'Forderungen aus L+L',alt:'Debitoren'},{nr:'1109',n:'WB FLL',alt:'Delkredere'}
+      ]},
+      {sub:'114',subName:'Übrige kurzfristige Forderungen',items:[
+        {nr:'1140',n:'Vorschüsse, Darlehen'},{nr:'1170',n:'Vorsteuer MWST Material, Waren, DL, Energie',alt:'Kl. 4'},
+        {nr:'1171',n:'Vorsteuer MWST Investitionen',alt:'übriger Betriebsaufwand Kl. 5-8'},
+        {nr:'1176',n:'Verrechnungssteuer',alt:'VST Guthaben, Debitor VST'}
+      ]},
+      {sub:'120',subName:'Vorräte und nicht fakturierte Dienstleistungen',items:[
+        {nr:'1200',n:'Handelswaren',alt:'Vorräte Handelswaren'},{nr:'1210',n:'Rohstoffe',alt:'Material'},
+        {nr:'1260',n:'Nicht fakturierte Dienstleistungen'}
+      ]},
+      {sub:'130',subName:'Aktive Rechnungsabgrenzungen',items:[
+        {nr:'1300',n:'ARA: Aktive Rechnungsabgrenzung',alt:'Transitorische Aktiven (TA)'}
+      ]}
+    ]},
+    {grp:'14',name:'Anlagevermögen (AV)',accounts:[
+      {sub:'140',subName:'Finanzanlagen',items:[
+        {nr:'1440',n:'Wertschriften des AV',alt:'langfristig'},{nr:'1450',n:'Darlehen',alt:'Aktivdarlehen'}
+      ]},
+      {sub:'148',subName:'Beteiligungen',items:[
+        {nr:'1480',n:'Beteiligungen'}
+      ]},
+      {sub:'150',subName:'Mobile Sachanlagen',items:[
+        {nr:'1500',n:'Maschinen und Apparate'},{nr:'1509',n:'AWB Maschinen und App.',alt:'Wertberichtigung'},
+        {nr:'1510',n:'Mobiliar und Einrichtungen'},{nr:'1520',n:'Büromaschinen, Informatik'},
+        {nr:'1530',n:'Fahrzeuge'},{nr:'1540',n:'Werkzeuge und Geräte'}
+      ]},
+      {sub:'160',subName:'Immobile Sachanlagen',items:[
+        {nr:'1600',n:'Immobilien',alt:'Geschäftsliegenschaften'}
+      ]},
+      {sub:'170',subName:'Immaterielle Werte',items:[
+        {nr:'1700',n:'Patente, Marken, Lizenzen, Goodwill'}
+      ]},
+      {sub:'180',subName:'Nicht einbezahltes Eigenkapital',items:[
+        {nr:'1850',n:'Nicht einbezahltes Aktien-/Stammkapital'}
+      ]}
+    ]}
+  ]},
+  {cls:2,clsName:'Passiven',groups:[
+    {grp:'20',name:'Kurzfristiges Fremdkapital',accounts:[
+      {sub:'200',subName:'Verbindlichkeiten aus Lieferungen und Leistungen',items:[
+        {nr:'2000',n:'Verbindlichkeiten aus L+L',alt:'Kreditoren'}
+      ]},
+      {sub:'210',subName:'Kurzfristige verzinsliche Verbindlichkeiten',items:[
+        {nr:'2100',n:'Bankverbindlichkeiten',alt:'Bankkredite'},{nr:'2140',n:'Übrige verzinsliche Verbindlichkeiten',alt:'Passivdarlehen kurzfr.'}
+      ]},
+      {sub:'220',subName:'Übrige kurzfristige Verbindlichkeiten',items:[
+        {nr:'2200',n:'Geschuldete MWST',alt:'Umsatzsteuer'},{nr:'2206',n:'Verrechnungssteuer Schulden',alt:'Kreditor VST'},
+        {nr:'2270',n:'Beschlossene Ausschüttungen'},{nr:'2279',n:'Sozialversicherungen',alt:'Kreditor Sozialversicherungen'}
+      ]},
+      {sub:'230',subName:'Passive Rechnungsabgrenzung / kurzfr. Rückstellungen',items:[
+        {nr:'2300',n:'PRA: Passive Rechnungsabgrenzung',alt:'Transitorische Passiven (TP)'},
+        {nr:'2330',n:'Kurzfristige Rückstellungen'}
+      ]}
+    ]},
+    {grp:'24',name:'Langfristiges Fremdkapital',accounts:[
+      {sub:'240',subName:'Langfristige verzinsliche Verbindlichkeiten',items:[
+        {nr:'2400',n:'Bankverbindlichkeiten',alt:'langfristig'},{nr:'2450',n:'Darlehen',alt:'Passivdarlehen langfr.'},
+        {nr:'2451',n:'Hypotheken'}
+      ]},
+      {sub:'260',subName:'Rückstellungen / vom Gesetz vorgesehene Positionen',items:[
+        {nr:'2600',n:'Rückstellungen',alt:'langfristig'}
+      ]}
+    ]},
+    {grp:'28',name:'Eigenkapital (EK)',accounts:[
+      {sub:'280',subName:'Eigenkapital Einzelunternehmen',items:[
+        {nr:'2800',n:'Eigenkapital zu Beginn des Geschäftsjahres'},
+        {nr:'2850',n:'Privat',alt:'Privatentnahmen/-einlagen'},
+        {nr:'2891',n:'Jahresgewinn oder -verlust'}
+      ]},
+      {sub:'281',subName:'Eigenkapital Juristische Person',items:[
+        {nr:'2800',n:'Aktienkapital',alt:'Grund-/Stammkapital'},
+        {nr:'2950',n:'Gesetzliche Gewinnreserve'},{nr:'2970',n:'Gewinn- oder Verlustvortrag'},
+        {nr:'2979',n:'Jahresgewinn oder -verlust'}
+      ]}
+    ]}
+  ]},
+  {cls:3,clsName:'Betrieblicher Ertrag aus Lieferungen/Leistungen',groups:[
+    {grp:'3',name:'Erträge',accounts:[
+      {sub:'300',subName:'Betriebliche Erlöse',items:[
+        {nr:'3000',n:'Produktionserlöse',alt:'Produktionsbetrieb'},
+        {nr:'3200',n:'Handelserlöse',alt:'Warenertrag'},
+        {nr:'3400',n:'Dienstleistungserlöse',alt:'Dienstleistungsertrag'},
+        {nr:'3600',n:'Übrige Erlöse',alt:'Übriger Betriebsertrag'},
+        {nr:'3800',n:'Verluste Forderungen',alt:'Debitorenverluste'},
+        {nr:'3805',n:'Kredit-/Debitkartenkonto-Kosten'}
+      ]}
+    ]}
+  ]},
+  {cls:4,clsName:'Aufwand für Material, Handelswaren, DL und Energie',groups:[
+    {grp:'4',name:'Materialaufwand',accounts:[
+      {sub:'400',subName:'Aufwand Klasse 4',items:[
+        {nr:'4000',n:'Materialaufwand Produktion',alt:'Materialaufwand'},
+        {nr:'4200',n:'Handelswarenaufwand',alt:'Warenaufwand'},
+        {nr:'4400',n:'Aufwand für bezogene Dienstleistungen'},
+        {nr:'4500',n:'Energieaufwand',alt:'zur Leistungserstellung'},
+        {nr:'4900',n:'Aufwandsminderungen'}
+      ]}
+    ]}
+  ]},
+  {cls:5,clsName:'Personalaufwand',groups:[
+    {grp:'5',name:'Personalaufwand',accounts:[
+      {sub:'500',subName:'Personal',items:[
+        {nr:'5000',n:'Lohnaufwand'},{nr:'5700',n:'Sozialversicherungsaufwand'},
+        {nr:'5800',n:'Übriger Personalaufwand'},
+        {nr:'5900',n:'Leistungen Dritter',alt:'z.B. Personalverleih'}
+      ]}
+    ]}
+  ]},
+  {cls:6,clsName:'Übriger betrieblicher Aufwand, Abschreibungen, Finanzergebnis',groups:[
+    {grp:'6',name:'Übriger Aufwand & Finanzen',accounts:[
+      {sub:'600',subName:'Betrieblicher Aufwand',items:[
+        {nr:'6000',n:'Raumaufwand',alt:'Mietaufwand'},
+        {nr:'6100',n:'Unterhalt, Reparaturen, Ersatz',alt:'URE mobile Sachanlagen'},
+        {nr:'6200',n:'Fahrzeug- und Transportaufwand'},
+        {nr:'6260',n:'Leasingaufwand Sachanlagen'},
+        {nr:'6300',n:'Sachversicherungen, Gebühren',alt:'Versicherungsaufwand'},
+        {nr:'6400',n:'Energie- und Entsorgungsaufwand'},
+        {nr:'6500',n:'Verwaltungsaufwand'},
+        {nr:'6570',n:'Informatikaufwand',alt:'inkl. Leasing'},
+        {nr:'6600',n:'Werbeaufwand'},
+        {nr:'6700',n:'Sonstiger betrieblicher Aufwand'}
+      ]},
+      {sub:'690',subName:'Abschreibungen und Finanzergebnis',items:[
+        {nr:'6800',n:'Abschreibungen',alt:'auf Positionen des AV'},
+        {nr:'6900',n:'Finanzaufwand',alt:'Zinsaufwand'},
+        {nr:'6950',n:'Finanzertrag',alt:'Zinsertrag'}
+      ]}
+    ]}
+  ]},
+  {cls:7,clsName:'Betrieblicher Nebenertrag',groups:[
+    {grp:'7',name:'Nebenbetrieb & Liegenschaften',accounts:[
+      {sub:'700',subName:'Nebenbetrieb / Liegenschaften',items:[
+        {nr:'7000',n:'Ertrag Nebenbetrieb'},{nr:'7010',n:'Aufwand Nebenbetrieb'},
+        {nr:'7500',n:'Ertrag betriebliche Liegenschaften',alt:'Immobilienertrag'},
+        {nr:'7510',n:'Aufwand betriebliche Liegenschaften',alt:'Immobilienaufwand'}
+      ]}
+    ]}
+  ]},
+  {cls:8,clsName:'Betriebsfremder, ausserordentlicher Aufwand und Ertrag',groups:[
+    {grp:'8',name:'Betriebsfremd / Ausserordentlich',accounts:[
+      {sub:'800',subName:'Betriebsfremd und ausserordentlich',items:[
+        {nr:'8000',n:'Betriebsfremder Aufwand'},{nr:'8100',n:'Betriebsfremder Ertrag'},
+        {nr:'8500',n:'Ausserordentlicher Aufwand',alt:'einmalig/periodenfremd'},
+        {nr:'8900',n:'Direkte Steuern'}
+      ]}
+    ]}
+  ]},
+  {cls:9,clsName:'Abschluss',groups:[
+    {grp:'9',name:'Abschluss',accounts:[
+      {sub:'920',subName:'Abschluss',items:[
+        {nr:'9200',n:'Jahresgewinn oder -verlust'}
+      ]}
+    ]}
+  ]}
+];
+
+// ─── Kontenrahmen Panel ─────────────────────────────────────────────────────
+function KontenrahmenPanel({onClose}){
+  const [search,setSearch]=useState('');
+  const [filterCls,setFilterCls]=useState(0); // 0 = alle
+  const s=search.toLowerCase();
+
+  function matchItem(item){
+    if(!s)return true;
+    return item.nr.indexOf(s)>=0||item.n.toLowerCase().indexOf(s)>=0||(item.alt&&item.alt.toLowerCase().indexOf(s)>=0);
+  }
+  function matchSub(sub){return sub.items.some(matchItem)}
+  function matchGrp(grp){return grp.accounts.some(matchSub)}
+  function matchClsData(c){return c.groups.some(matchGrp)}
+
+  const filtered = KR_DATA.filter(c=>{
+    if(filterCls>0&&c.cls!==filterCls)return false;
+    return s?matchClsData(c):true;
+  });
+
+  return e('div',{className:'panel-overlay kr-panel'},
+    e('div',{className:'panel-header'},
+      e('b',null,'\ud83d\udcca Kontenrahmen KMU'),
+      e('button',{className:'panel-close',onClick:onClose},'\u2715')
+    ),
+    e('div',{className:'kr-search'},
+      e('input',{value:search,onChange:ev=>setSearch(ev.target.value),placeholder:'Konto suchen (Nr. oder Name)\u2026'})
+    ),
+    e('div',{className:'kr-tabs'},
+      e('button',{className:'kr-tab'+(filterCls===0?' active':''),onClick:()=>setFilterCls(0)},'Alle'),
+      [1,2,3,4,5,6,7,8,9].map(n=>
+        e('button',{key:n,className:'kr-tab'+(filterCls===n?' active':''),onClick:()=>setFilterCls(filterCls===n?0:n)},n)
+      )
+    ),
+    e('div',{className:'kr-list'},
+      filtered.map(c=>
+        e('div',{key:c.cls},
+          e('div',{className:'kr-class-header'},c.cls+' \u2013 '+c.clsName),
+          c.groups.filter(g=>s?matchGrp(g):true).map(g=>
+            e('div',{key:g.grp},
+              g.accounts.filter(sub=>s?matchSub(sub):true).map(sub=>
+                e('div',{key:sub.sub},
+                  e('div',{className:'kr-group'},sub.sub+' '+sub.subName),
+                  sub.items.filter(matchItem).map(item=>
+                    e('div',{key:item.nr+item.n,className:'kr-account'},
+                      e('span',{className:'kr-num'},item.nr),
+                      e('span',{className:'kr-name'},item.n,
+                        item.alt?e('span',{className:'kr-alt'},' ('+item.alt+')'):null
+                      )
+                    )
+                  )
+                )
+              )
+            )
+          )
+        )
+      ),
+      filtered.length===0?e('div',{style:{padding:16,textAlign:'center',color:'var(--text2)',fontSize:'.8rem'}},'Keine Konten gefunden.'):null
+    )
+  );
+}
+
 // ─── Components ──────────────────────────────────────────────────────────────
 
 function App(){
@@ -158,6 +560,12 @@ function App(){
   const [timerOn, setTimerOn] = useState(false);
   const [seconds, setSeconds] = useState(3600);
   const timerRef = useRef(null);
+  const [showCalc, setShowCalc] = useState(false);
+  const [showNotes, setShowNotes] = useState(false);
+  const [showGlossar, setShowGlossar] = useState(false);
+  const [showKR, setShowKR] = useState(false);
+  const [notes, setNotes] = useState(()=>localStorage.getItem('rw-notes')||'');
+  useEffect(()=>{localStorage.setItem('rw-notes',notes)},[notes]);
 
   useEffect(()=>{document.documentElement.className = dark?'dark':''},[dark]);
   useEffect(()=>{saveProgress(progress)},[progress]);
@@ -193,6 +601,12 @@ function App(){
           e('span',{onClick:toggleTimer,style:{cursor:'pointer'}}, timerOn?'\u23f8':'\u25b6'),
           e('span',{onClick:toggleTimer,style:{cursor:'pointer'}}, formatTime(seconds)),
           seconds<3600 ? e('span',{onClick:resetTimer,style:{cursor:'pointer',fontSize:'.75rem',opacity:.6}},'\u21bb') : null
+        ),
+        e('div',{className:'tool-bar'},
+          e('button',{className:'tool-btn'+(showCalc?' active':''),onClick:()=>setShowCalc(!showCalc)},'\ud83e\uddc2'+(showCalc?' \u2715':' Rechner')),
+          e('button',{className:'tool-btn'+(showNotes?' active':''),onClick:()=>setShowNotes(!showNotes)},'\ud83d\udcdd'+(showNotes?' \u2715':' Notizen')),
+          e('button',{className:'tool-btn'+(showGlossar?' active':''),onClick:()=>setShowGlossar(!showGlossar)},'\ud83d\udcd6'+(showGlossar?' \u2715':' Glossar')),
+          e('button',{className:'tool-btn'+(showKR?' active':''),onClick:()=>setShowKR(!showKR)},'\ud83d\udcca'+(showKR?' \u2715':' Kontenrahmen'))
         ),
         e('span',{className:'nav-btn',style:{fontSize:'.75rem'}}, totalDone+'/14'),
         e('button',{className:'nav-btn',onClick:toggleDark}, dark?'\u2600\ufe0f Licht':'\u263e Dunkel'),
@@ -236,7 +650,11 @@ function App(){
         );
       }),
       e('div',{className:'footer'},'Built by Leandro')
-    )
+    ),
+    showCalc ? e(CalcPanel,{onClose:()=>setShowCalc(false)}) : null,
+    showNotes ? e(NotesPanel,{onClose:()=>setShowNotes(false),notes,setNotes}) : null,
+    showGlossar ? e(GlossaryPanel,{onClose:()=>setShowGlossar(false)}) : null,
+    showKR ? e(KontenrahmenPanel,{onClose:()=>setShowKR(false)}) : null
   );
 }
 
