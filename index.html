@@ -1,0 +1,1167 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Rechnungswesen Lern-App</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+<script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{--bg:#f0f1f5;--nav:#1a2332;--card:#ffffff;--text:#1a2332;--text2:#64748b;--accent:#3b82f6;--green:#059669;--red:#dc2626;--border:#e2e8f0;--card-shadow:0 1px 3px rgba(0,0,0,0.08);--input-bg:#f8fafc;--hover:#f1f5f9}
+.dark{--bg:#0f172a;--nav:#0b1120;--card:#1e293b;--text:#e2e8f0;--text2:#94a3b8;--accent:#60a5fa;--green:#34d399;--red:#f87171;--border:#334155;--card-shadow:0 1px 3px rgba(0,0,0,0.3);--input-bg:#0f172a;--hover:#334155}
+body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;transition:background .3s,color .3s}
+input,select,button,textarea{font-family:'Inter',sans-serif}
+.nav{background:var(--nav);padding:16px 24px;position:sticky;top:0;z-index:100;display:flex;align-items:center;justify-content:space-between}
+.nav-title{color:#fff;font-size:1.25rem;font-weight:700}
+.nav-sub{color:#94a3b8;font-size:.8rem;margin-top:2px}
+.nav-right{display:flex;align-items:center;gap:12px}
+.nav-btn{background:rgba(255,255,255,.1);border:none;color:#fff;padding:8px 12px;border-radius:8px;cursor:pointer;font-size:.85rem;display:flex;align-items:center;gap:6px;transition:background .2s}
+.nav-btn:hover{background:rgba(255,255,255,.2)}
+.container{max-width:900px;margin:0 auto;padding:24px 16px 80px}
+.chapter-card{background:var(--card);border-radius:16px;box-shadow:var(--card-shadow);margin-bottom:16px;overflow:hidden;border:1px solid var(--border);transition:background .3s,border .3s}
+.chapter-header{padding:20px 24px;cursor:pointer;display:flex;align-items:center;justify-content:space-between;user-select:none}
+.chapter-header:hover{background:var(--hover)}
+.ch-info{flex:1}
+.ch-num{font-size:.75rem;font-weight:600;color:var(--accent);text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px}
+.ch-title{font-size:1.1rem;font-weight:700;margin-bottom:8px}
+.ch-meta{font-size:.8rem;color:var(--text2)}
+.progress-bar{height:6px;background:var(--border);border-radius:3px;margin-top:10px;overflow:hidden;max-width:300px}
+.progress-fill{height:100%;background:var(--accent);border-radius:3px;transition:width .5s ease}
+.ch-arrow{font-size:1.2rem;color:var(--text2);transition:transform .3s;margin-left:16px}
+.ch-arrow.open{transform:rotate(180deg)}
+.exercise-list{padding:0 16px 16px}
+.ex-card{background:var(--card);border:1px solid var(--border);border-radius:12px;margin-bottom:12px;overflow:hidden;transition:background .3s,border .3s}
+.ex-header{padding:16px 20px;cursor:pointer;display:flex;align-items:center;justify-content:space-between}
+.ex-header:hover{background:var(--hover)}
+.ex-num{background:var(--accent);color:#fff;width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:.85rem;flex-shrink:0;margin-right:12px}
+.ex-num.done{background:var(--green)}
+.ex-title-wrap{flex:1}
+.ex-title{font-weight:600;font-size:.95rem}
+.ex-type{font-size:.75rem;color:var(--text2);margin-top:2px}
+.ex-body{padding:0 20px 20px}
+.ex-instruction{font-size:.85rem;color:var(--text2);margin-bottom:16px;line-height:1.5;font-style:italic}
+.blank-text{font-size:.9rem;line-height:2.2;margin-bottom:12px}
+.blank-input{border:1px solid var(--border);border-radius:6px;padding:4px 8px;font-size:.85rem;width:140px;background:var(--input-bg);color:var(--text);outline:none;transition:border .2s}
+.blank-input:focus{border-color:var(--accent)}
+.blank-input.correct{border-color:var(--green);background:rgba(5,150,105,.08)}
+.blank-input.wrong{border-color:var(--red);background:rgba(220,38,38,.08)}
+.tf-row{padding:12px 0;border-bottom:1px solid var(--border);display:flex;flex-direction:column;gap:8px}
+.tf-row:last-child{border-bottom:none}
+.tf-statement{font-size:.9rem;line-height:1.5}
+.tf-buttons{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.tf-btn{padding:6px 16px;border-radius:6px;border:1px solid var(--border);background:var(--input-bg);color:var(--text);cursor:pointer;font-size:.85rem;font-weight:500;transition:all .2s}
+.tf-btn:hover{border-color:var(--accent)}
+.tf-btn.selected{background:var(--accent);color:#fff;border-color:var(--accent)}
+.tf-btn.correct-sel{background:var(--green);color:#fff;border-color:var(--green)}
+.tf-btn.wrong-sel{background:var(--red);color:#fff;border-color:var(--red)}
+.tf-btn.correct-unsel{border-color:var(--green);color:var(--green)}
+.feedback{font-size:.8rem;margin-top:4px;padding:6px 10px;border-radius:6px;line-height:1.4}
+.feedback.ok{background:rgba(5,150,105,.1);color:var(--green)}
+.feedback.nok{background:rgba(220,38,38,.1);color:var(--red)}
+.match-row{display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid var(--border);flex-wrap:wrap}
+.match-row:last-child{border-bottom:none}
+.match-label{flex:1;font-size:.9rem;min-width:200px}
+.match-select{border:1px solid var(--border);border-radius:6px;padding:6px 10px;font-size:.85rem;background:var(--input-bg);color:var(--text);min-width:200px;cursor:pointer}
+.match-select.correct{border-color:var(--green);background:rgba(5,150,105,.08)}
+.match-select.wrong{border-color:var(--red);background:rgba(220,38,38,.08)}
+.calc-row{display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid var(--border);flex-wrap:wrap}
+.calc-row:last-child{border-bottom:none}
+.calc-label{font-size:.9rem;min-width:120px}
+.calc-val{font-size:.9rem;font-weight:500;min-width:80px}
+.calc-input{border:1px solid var(--border);border-radius:6px;padding:6px 10px;font-size:.85rem;width:100px;background:var(--input-bg);color:var(--text);text-align:right}
+.calc-input.correct{border-color:var(--green);background:rgba(5,150,105,.08)}
+.calc-input.wrong{border-color:var(--red);background:rgba(220,38,38,.08)}
+.check-table{width:100%;border-collapse:collapse;font-size:.85rem}
+.check-table th{padding:8px 6px;text-align:center;background:var(--hover);font-weight:600;font-size:.8rem;border:1px solid var(--border)}
+.check-table td{padding:8px 6px;border:1px solid var(--border);text-align:center}
+.check-table td:first-child{text-align:left;min-width:200px}
+.check-table input[type=radio]{cursor:pointer;width:16px;height:16px;accent-color:var(--accent)}
+.check-table tr.correct-row{background:rgba(5,150,105,.06)}
+.check-table tr.wrong-row{background:rgba(220,38,38,.06)}
+.btn-row{display:flex;gap:10px;margin-top:20px;flex-wrap:wrap}
+.btn{padding:10px 20px;border-radius:8px;border:none;font-size:.9rem;font-weight:600;cursor:pointer;transition:all .2s;display:flex;align-items:center;gap:6px}
+.btn-primary{background:var(--accent);color:#fff}
+.btn-primary:hover{background:#2563eb}
+.btn-secondary{background:var(--input-bg);color:var(--text);border:1px solid var(--border)}
+.btn-secondary:hover{background:var(--hover)}
+.btn-reset{background:var(--red);color:#fff}
+.btn-reset:hover{opacity:.9}
+.solution-box{background:rgba(5,150,105,.06);border:1px solid var(--green);border-radius:8px;padding:16px;margin-top:12px;font-size:.85rem;line-height:1.6}
+.solution-box strong{color:var(--green)}
+.bilanz-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px}
+.bilanz-side{background:var(--input-bg);border-radius:8px;padding:16px;border:1px solid var(--border)}
+.bilanz-side h4{font-size:.9rem;font-weight:700;margin-bottom:12px;padding-bottom:8px;border-bottom:2px solid var(--accent)}
+.bilanz-item{display:flex;justify-content:space-between;align-items:center;padding:6px 0;font-size:.85rem;gap:8px}
+.bilanz-total{display:flex;justify-content:space-between;padding:8px 0;font-weight:700;font-size:.9rem;border-top:2px solid var(--text);margin-top:8px}
+.text-input{border:1px solid var(--border);border-radius:6px;padding:8px 12px;font-size:.85rem;width:100%;background:var(--input-bg);color:var(--text);margin-top:4px}
+.text-input.correct{border-color:var(--green);background:rgba(5,150,105,.08)}
+.text-input.wrong{border-color:var(--red);background:rgba(220,38,38,.08)}
+.text-q{margin-bottom:16px}
+.text-q p{font-size:.9rem;line-height:1.5;margin-bottom:6px}
+.score-badge{display:inline-flex;align-items:center;gap:4px;padding:4px 10px;border-radius:12px;font-size:.8rem;font-weight:600}
+.score-badge.good{background:rgba(5,150,105,.1);color:var(--green)}
+.score-badge.bad{background:rgba(220,38,38,.1);color:var(--red)}
+.timer-display{color:#fff;font-size:.9rem;font-weight:500;font-variant-numeric:tabular-nums}
+.footer{text-align:center;padding:24px;font-size:.8rem;color:var(--text2)}
+.drag-item{background:var(--input-bg);border:1px solid var(--border);border-radius:6px;padding:8px 12px;font-size:.85rem;cursor:pointer;transition:all .2s;display:inline-block;margin:4px}
+.drag-item:hover{border-color:var(--accent);background:var(--hover)}
+.drag-item.placed{opacity:.4}
+.drop-zone{min-height:40px;border:2px dashed var(--border);border-radius:8px;padding:8px;margin-bottom:8px}
+.section-title{font-weight:600;font-size:.9rem;margin:16px 0 8px;color:var(--accent)}
+.sub-q{margin-top:16px;padding-top:12px;border-top:1px solid var(--border)}
+.sub-q label{font-size:.85rem;font-weight:500;display:block;margin-bottom:4px}
+@media(max-width:640px){
+  .bilanz-grid{grid-template-columns:1fr}
+  .match-row{flex-direction:column;align-items:flex-start;gap:6px}
+  .calc-row{flex-direction:column;align-items:flex-start;gap:4px}
+  .nav{padding:12px 16px}
+  .nav-title{font-size:1.05rem}
+  .container{padding:16px 10px 60px}
+  .check-table{font-size:.75rem;display:block;overflow-x:auto}
+}
+</style>
+</head>
+<body>
+<div id="root"></div>
+<script>
+const e = React.createElement;
+const {useState, useEffect, useRef, useCallback, useMemo} = React;
+
+// ─── Data ────────────────────────────────────────────────────────────────────
+
+const chapters = [
+  {id:1, title:'Uebersicht ueber das Fachgebiet', titleDisplay:'Übersicht über das Fachgebiet', exercises:[1,2,3,4]},
+  {id:2, title:'Bilanz – Ausweis von Vermögen und Schulden', titleDisplay:'Bilanz – Ausweis von Vermögen und Schulden', exercises:[5,6,7,8,9,10,11,12,13,14]}
+];
+
+// ─── Helpers ─────────────────────────────────────────────────────────────────
+
+function normalize(s){return (s||'').trim().toLowerCase().replace(/[()]/g,'').replace(/\s+/g,' ')}
+function matchAnswer(input, answers){
+  const n = normalize(input);
+  if(!n) return false;
+  if(typeof answers === 'string') return n === normalize(answers);
+  return answers.some(a => n === normalize(a));
+}
+function loadProgress(){try{return JSON.parse(localStorage.getItem('rw-progress'))||{}}catch(e){return{}}}
+function saveProgress(p){localStorage.setItem('rw-progress', JSON.stringify(p))}
+
+// ─── Components ──────────────────────────────────────────────────────────────
+
+function App(){
+  const [dark, setDark] = useState(()=> localStorage.getItem('rw-dark')==='1');
+  const [openCh, setOpenCh] = useState(null);
+  const [openEx, setOpenEx] = useState(null);
+  const [progress, setProgress] = useState(loadProgress);
+  const [timerOn, setTimerOn] = useState(false);
+  const [seconds, setSeconds] = useState(3600);
+  const timerRef = useRef(null);
+
+  useEffect(()=>{document.documentElement.className = dark?'dark':''},[dark]);
+  useEffect(()=>{saveProgress(progress)},[progress]);
+  useEffect(()=>{
+    if(timerOn && seconds>0){
+      timerRef.current = setInterval(()=>setSeconds(s=>s>0?s-1:0),1000);
+      return ()=>clearInterval(timerRef.current);
+    } else { clearInterval(timerRef.current); }
+  },[timerOn, seconds]);
+
+  function toggleDark(){setDark(d=>{localStorage.setItem('rw-dark',d?'0':'1');return !d})}
+  function toggleTimer(){setTimerOn(t=>!t)}
+  function resetTimer(){setSeconds(3600);setTimerOn(false)}
+  function markDone(exId, score){setProgress(p=>({...p,[exId]:{done:true,score}}))}
+  function resetAll(){setProgress({});localStorage.removeItem('rw-progress')}
+  function formatTime(s){const m=Math.floor(s/60);const ss=s%60;return String(m).padStart(2,'0')+':'+String(ss).padStart(2,'0')}
+
+  const chProgress = (ch)=>{
+    const done = ch.exercises.filter(id=>progress[id]&&progress[id].done).length;
+    return {done, total:ch.exercises.length, pct: Math.round(done/ch.exercises.length*100)};
+  };
+
+  const totalDone = Object.values(progress).filter(p=>p&&p.done).length;
+
+  return e('div',null,
+    e('nav',{className:'nav'},
+      e('div',null,
+        e('div',{className:'nav-title'},'Rechnungswesen'),
+        e('div',{className:'nav-sub'},'Lern-App \u00b7 Buchhaltung & Bilanz')
+      ),
+      e('div',{className:'nav-right'},
+        e('div',{className:'timer-display', style:{cursor:'pointer',display:'flex',alignItems:'center',gap:8}},
+          e('span',{onClick:toggleTimer,style:{cursor:'pointer'}}, timerOn?'\u23f8':'\u25b6'),
+          e('span',{onClick:toggleTimer,style:{cursor:'pointer'}}, formatTime(seconds)),
+          seconds<3600 ? e('span',{onClick:resetTimer,style:{cursor:'pointer',fontSize:'.75rem',opacity:.6}},'\u21bb') : null
+        ),
+        e('span',{className:'nav-btn',style:{fontSize:'.75rem'}}, totalDone+'/14'),
+        e('button',{className:'nav-btn',onClick:toggleDark}, dark?'\u2600\ufe0f Licht':'\u263e Dunkel'),
+        e('button',{className:'nav-btn',onClick:resetAll}, 'Reset')
+      )
+    ),
+    e('div',{className:'container'},
+      chapters.map(ch=>{
+        const cp = chProgress(ch);
+        const isOpen = openCh===ch.id;
+        return e('div',{key:ch.id,className:'chapter-card'},
+          e('div',{className:'chapter-header',onClick:()=>setOpenCh(isOpen?null:ch.id)},
+            e('div',{className:'ch-info'},
+              e('div',{className:'ch-num'},'Kapitel '+ch.id),
+              e('div',{className:'ch-title'},ch.titleDisplay),
+              e('div',{className:'ch-meta'},cp.done+'/'+cp.total+' Aufgaben abgeschlossen'),
+              e('div',{className:'progress-bar'},e('div',{className:'progress-fill',style:{width:cp.pct+'%'}}))
+            ),
+            e('span',{className:'ch-arrow'+(isOpen?' open':'')},'\u25bc')
+          ),
+          isOpen ? e('div',{className:'exercise-list'},
+            ch.exercises.map(exId=>{
+              const isDone = progress[exId]&&progress[exId].done;
+              const isExOpen = openEx===exId;
+              return e('div',{key:exId,className:'ex-card'},
+                e('div',{className:'ex-header',onClick:()=>setOpenEx(isExOpen?null:exId)},
+                  e('span',{className:'ex-num'+(isDone?' done':'')}, exId),
+                  e('div',{className:'ex-title-wrap'},
+                    e('div',{className:'ex-title'}, exerciseTitles[exId]),
+                    e('div',{className:'ex-type'}, exerciseTypes[exId]),
+                    isDone ? e('span',{className:'score-badge good'},'Erledigt') : null
+                  ),
+                  e('span',{className:'ch-arrow'+(isExOpen?' open':'')},'\u25bc')
+                ),
+                isExOpen ? e('div',{className:'ex-body'},
+                  e(ExerciseRenderer, {exId, markDone, progress})
+                ) : null
+              );
+            })
+          ) : null
+        );
+      }),
+      e('div',{className:'footer'},'Built by Leandro')
+    )
+  );
+}
+
+const exerciseTitles = {
+  1:'Lückentext – Das Fachgebiet Rechnungswesen',
+  2:'Richtig oder falsch? – Buchhaltung und Rechnungswesen',
+  3:'Zuordnungsaufgabe – Bereiche des Rechnungswesens',
+  4:'Was wird umschrieben?',
+  5:'Lückentext – Aussagen zur Bilanz',
+  6:'Richtig oder falsch? – Zusammenhänge in der Bilanz',
+  7:'Ergänzung der fehlenden Grösse',
+  8:'Zuordnungsaufgabe – Bilanzpositionen',
+  9:'Buchhalterische Kurzbezeichnungen',
+  10:'Was wird umschrieben? (Bilanzpositionen)',
+  11:'Bilanzpositionen in Bilanzschema einordnen',
+  12:'Ergänzung der fehlenden Grössen (Papierindustrie)',
+  13:'Bilanzen für zwei Unternehmen erstellen',
+  14:'Bilanzen von Dienstleistungsunternehmen'
+};
+const exerciseTypes = {
+  1:'Lückentext',2:'Richtig/Falsch',3:'Zuordnung',4:'Freitext',
+  5:'Lückentext',6:'Richtig/Falsch',7:'Berechnung',8:'Zuordnung (Tabelle)',
+  9:'Zuordnung (Dropdown)',10:'Freitext',11:'Bilanzschema',12:'Bilanzschema',
+  13:'Bilanzschema + Berechnung',14:'Bilanzschema + Berechnung'
+};
+
+// ─── Exercise Renderer ──────────────────────────────────────────────────────
+
+function ExerciseRenderer({exId, markDone, progress}){
+  switch(exId){
+    case 1: return e(Ex1,{markDone});
+    case 2: return e(Ex2,{markDone});
+    case 3: return e(Ex3,{markDone});
+    case 4: return e(Ex4,{markDone});
+    case 5: return e(Ex5,{markDone});
+    case 6: return e(Ex6,{markDone});
+    case 7: return e(Ex7,{markDone});
+    case 8: return e(Ex8,{markDone});
+    case 9: return e(Ex9,{markDone});
+    case 10: return e(Ex10,{markDone});
+    case 11: return e(Ex11,{markDone});
+    case 12: return e(Ex12,{markDone});
+    case 13: return e(Ex13,{markDone});
+    case 14: return e(Ex14,{markDone});
+    default: return e('div',null,'Nicht gefunden');
+  }
+}
+
+// ─── Lückentext Component ────────────────────────────────────────────────────
+
+function LueckenText({parts, answers, checked, inputs, onChange}){
+  // parts is array of {text, blankIndex} where blankIndex is index into answers
+  return e('div',{className:'blank-text'},
+    parts.map((p,i)=>{
+      const nodes = [];
+      if(p.text) nodes.push(e('span',{key:'t'+i},p.text));
+      if(p.blankIndex!==undefined){
+        const bi = p.blankIndex;
+        const cls = checked ? (matchAnswer(inputs[bi]||'',answers[bi])?'blank-input correct':'blank-input wrong') : 'blank-input';
+        nodes.push(e('input',{
+          key:'b'+i, className:cls, type:'text',
+          value:inputs[bi]||'', placeholder:'...',
+          onChange:ev=>onChange(bi, ev.target.value),
+          disabled:checked
+        }));
+      }
+      return e(React.Fragment,{key:i},nodes);
+    })
+  );
+}
+
+function parseBlanks(template, answersList){
+  // template has ___(answer)___ placeholders
+  const parts = [];
+  let idx = 0;
+  const regex = /___\(([^)]+)\)___/g;
+  let match, blankIdx = 0;
+  let lastEnd = 0;
+  while((match=regex.exec(template))!==null){
+    if(match.index > lastEnd) parts.push({text:template.slice(lastEnd,match.index)});
+    parts.push({text:'', blankIndex:blankIdx});
+    blankIdx++;
+    lastEnd = match.index + match[0].length;
+  }
+  if(lastEnd < template.length) parts.push({text:template.slice(lastEnd)});
+  return parts;
+}
+
+// ─── Exercise 1 ──────────────────────────────────────────────────────────────
+
+function Ex1({markDone}){
+  const blanksA = ['zwei','finanzielle','Erfolgsrechnung','betriebliche','Kosten'];
+  const blanksB = ['Nebenbuchhaltungen','Lohnbuchhaltung','Debitorenbuchhaltung','Kreditorenbuchhaltung'];
+  const blanksC = ['wichtige Grundlage','Entscheidung','Führung'];
+  const allBlanks = [...blanksA,...blanksB,...blanksC];
+  const templateA = 'Das Rechnungswesen kann in ___(zwei)___ Hauptbereiche gegliedert werden, nämlich das ___(finanzielle)___ Rechnungswesen (externer Abschluss mit Bilanz, ___(Erfolgsrechnung)___ und evtl. weiteren Elementen) und das ___(betriebliche)___ Rechnungswesen (interner Abschluss mit der Erfassung der ___(Kosten)___).';
+  const templateB = 'Die Hauptbereiche werden durch verschiedene ___(Nebenbuchhaltungen)___ unterstützt, die in einer Buchhaltungssoftware meist spezielle Software-Module sind. Dazu gehören beispielsweise die ___(Lohnbuchhaltung)___, die die Arbeitsleistungen im Betrieb abrechnet, oder die ___(Debitorenbuchhaltung)___, die die Beziehungen mit Kunden erfasst, oder die ___(Kreditorenbuchhaltung)___, die den Verkehr mit Lieferanten erfasst.';
+  const templateC = 'Das Rechnungswesen erfüllt im Unternehmen eine ___(wichtige Grundlage)___ für die Planung, ___(Entscheidung)___, Kontrolle und ___(Führung)___.';
+
+  const allAnswers = [
+    ['zwei','2'],['finanzielle','finanzielles'],['Erfolgsrechnung'],['betriebliche','betriebliches'],['Kosten'],
+    ['Nebenbuchhaltungen','Nebenbuchaltungen'],['Lohnbuchhaltung'],['Debitorenbuchhaltung'],['Kreditorenbuchhaltung'],
+    ['wichtige Grundlage'],['Entscheidung'],['Führung','Fuehrung']
+  ];
+
+  const [inputs, setInputs] = useState(Array(12).fill(''));
+  const [checked, setChecked] = useState(false);
+  const [showSol, setShowSol] = useState(false);
+
+  function onChange(i,v){const n=[...inputs];n[i]=v;setInputs(n)}
+  function check(){
+    setChecked(true);
+    const correct = allAnswers.filter((a,i)=>matchAnswer(inputs[i],a)).length;
+    if(correct===12) markDone(1,100);
+    else markDone(1, Math.round(correct/12*100));
+  }
+  function reset(){setInputs(Array(12).fill(''));setChecked(false);setShowSol(false)}
+
+  const partsA = parseBlanks(templateA, blanksA);
+  const partsB = parseBlanks(templateB, blanksB);
+  const partsC = parseBlanks(templateC, blanksC);
+  // offset indices for B and C
+  const partsBOff = partsB.map(p=>p.blankIndex!==undefined?{...p,blankIndex:p.blankIndex+5}:p);
+  const partsCOff = partsC.map(p=>p.blankIndex!==undefined?{...p,blankIndex:p.blankIndex+9}:p);
+
+  return e('div',null,
+    e('div',{className:'ex-instruction'},'Ergänzen Sie die fehlenden Begriffe.'),
+    e('div',{className:'section-title'},'A)'),
+    e(LueckenText,{parts:partsA,answers:allAnswers,checked,inputs,onChange}),
+    e('div',{className:'section-title'},'B)'),
+    e(LueckenText,{parts:partsBOff,answers:allAnswers,checked,inputs,onChange}),
+    e('div',{className:'section-title'},'C)'),
+    e(LueckenText,{parts:partsCOff,answers:allAnswers,checked,inputs,onChange}),
+    e('div',{className:'btn-row'},
+      !checked?e('button',{className:'btn btn-primary',onClick:check},'Prüfen'):null,
+      checked?e('button',{className:'btn btn-secondary',onClick:()=>setShowSol(!showSol)},showSol?'Lösung ausblenden':'Lösung anzeigen'):null,
+      checked?e('button',{className:'btn btn-reset',onClick:reset},'Zurücksetzen'):null
+    ),
+    checked?e('div',{style:{marginTop:12}},
+      e('span',{className:'score-badge '+(allAnswers.filter((a,i)=>matchAnswer(inputs[i],a)).length===12?'good':'bad')},
+        allAnswers.filter((a,i)=>matchAnswer(inputs[i],a)).length+'/12 richtig')
+    ):null,
+    showSol?e('div',{className:'solution-box'},
+      e('strong',null,'Lösungen: '), allBlanks.join(', ')
+    ):null
+  );
+}
+
+// ─── Exercise 2 ──────────────────────────────────────────────────────────────
+
+function TrueFalseExercise({statements, exId, markDone}){
+  const [answers, setAnswers] = useState({});
+  const [checked, setChecked] = useState(false);
+  const [showSol, setShowSol] = useState(false);
+
+  function select(i,v){setAnswers(a=>({...a,[i]:v}))}
+  function check(){
+    setChecked(true);
+    const correct = statements.filter((s,i)=> answers[i]===s.correct).length;
+    markDone(exId, Math.round(correct/statements.length*100));
+  }
+  function reset(){setAnswers({});setChecked(false);setShowSol(false)}
+
+  return e('div',null,
+    e('div',{className:'ex-instruction'},'Beurteilen Sie die folgenden Aussagen als Richtig (R) oder Falsch (F).'),
+    statements.map((s,i)=>{
+      const userAns = answers[i];
+      let rCls='tf-btn', fCls='tf-btn';
+      if(!checked){
+        if(userAns==='R') rCls+=' selected';
+        if(userAns==='F') fCls+=' selected';
+      } else {
+        if(s.correct==='R'){
+          rCls += userAns==='R'?' correct-sel':' correct-unsel';
+          if(userAns==='F') fCls += ' wrong-sel';
+        } else {
+          fCls += userAns==='F'?' correct-sel':' correct-unsel';
+          if(userAns==='R') rCls += ' wrong-sel';
+        }
+      }
+      return e('div',{key:i,className:'tf-row'},
+        e('div',{className:'tf-statement'},(i+1)+'. '+s.text),
+        e('div',{className:'tf-buttons'},
+          e('button',{className:rCls,onClick:()=>!checked&&select(i,'R'),disabled:checked},'Richtig'),
+          e('button',{className:fCls,onClick:()=>!checked&&select(i,'F'),disabled:checked},'Falsch')
+        ),
+        checked && userAns!==s.correct && s.reason ? e('div',{className:'feedback nok'},s.reason) : null,
+        checked && userAns===s.correct ? e('div',{className:'feedback ok'},'Korrekt!') : null
+      );
+    }),
+    e('div',{className:'btn-row'},
+      !checked?e('button',{className:'btn btn-primary',onClick:check},'Prüfen'):null,
+      checked?e('button',{className:'btn btn-secondary',onClick:()=>setShowSol(!showSol)},showSol?'Lösung ausblenden':'Lösung anzeigen'):null,
+      checked?e('button',{className:'btn btn-reset',onClick:reset},'Zurücksetzen'):null
+    ),
+    checked?e('div',{style:{marginTop:12}},
+      e('span',{className:'score-badge '+(statements.filter((s,i)=>answers[i]===s.correct).length===statements.length?'good':'bad')},
+        statements.filter((s,i)=>answers[i]===s.correct).length+'/'+statements.length+' richtig')
+    ):null,
+    showSol?e('div',{className:'solution-box'},
+      statements.map((s,i)=>e('div',{key:i},(i+1)+'. '+s.correct+(s.reason?' – '+s.reason:'')))
+    ):null
+  );
+}
+
+function Ex2({markDone}){
+  const statements = [
+    {text:'Das Rechnungswesen ist im Unternehmen wichtige Grundlage für Planung, Entscheidung, Kontrolle und Führung.',correct:'R'},
+    {text:'Rechnungswesen und Buchhaltung sind letztlich das Gleiche, nämlich jeweils andere Ausdrücke für Finanzbuchhaltung.',correct:'F',reason:'Das Rechnungswesen umfasst mehr als nur die Buchhaltung. Es beinhaltet auch die Betriebsbuchhaltung, Hilfsrechnungen und Auswertungen.'},
+    {text:'Neben der Finanzbuchhaltung ist die Betriebsbuchhaltung ein Hauptbereich des Rechnungswesens.',correct:'R'},
+    {text:'Die Debitoren- und Kreditorenbuchhaltung (Kunden- und Lieferantenbuchh.) sind Beispiele für Nebenbereiche (Hilfsrechnungen) des Rechnungswesens.',correct:'R'},
+    {text:'Die Buchhaltung kann über alle Vorgänge, die sich in einem Unternehmen ereignen, Auskunft geben.',correct:'F',reason:'Die Buchhaltung erfasst nur zahlenmässig erfassbare Vorgänge, nicht alle Vorgänge (z.B. keine qualitativen Aspekte wie Mitarbeiterzufriedenheit).'},
+    {text:'Die Finanzbuchhaltung ist Grundlage für weitere Bereiche des Rechnungswesens.',correct:'R'}
+  ];
+  return e(TrueFalseExercise,{statements,exId:2,markDone});
+}
+
+// ─── Exercise 3 ──────────────────────────────────────────────────────────────
+
+function Ex3({markDone}){
+  const cats = ['','1 – Hilfsrechnungen','2 – Hauptbereich Finanzbuchhaltung','3 – Hauptbereich Betriebsbuchhaltung','4 – Auswertung der Buchhaltung'];
+  const items = [
+    {label:'A) Debitorenbuchhaltung (Kundenbuchhaltung)',correct:'1'},
+    {label:'B) Kalkulation',correct:'3'},
+    {label:'C) Bilanz',correct:'2'},
+    {label:'D) Kostenartenrechnung',correct:'3'},
+    {label:'E) Bilanz- und Erfolgsanalyse',correct:'4'},
+    {label:'F) Kreditorenbuchhaltung (Lieferantenbuchhaltung)',correct:'1'},
+    {label:'G) Lohnbuchhaltung',correct:'1'},
+    {label:'H) Erfolgsrechnung',correct:'2'}
+  ];
+
+  const [answers, setAnswers] = useState({});
+  const [checked, setChecked] = useState(false);
+  const [showSol, setShowSol] = useState(false);
+
+  function check(){
+    setChecked(true);
+    const correct = items.filter((it,i)=>answers[i]===it.correct).length;
+    markDone(3, Math.round(correct/items.length*100));
+  }
+  function reset(){setAnswers({});setChecked(false);setShowSol(false)}
+
+  return e('div',null,
+    e('div',{className:'ex-instruction'},'Ordnen Sie die Begriffe den Bereichen des Rechnungswesens zu.'),
+    items.map((it,i)=>{
+      let cls = 'match-select';
+      if(checked) cls += answers[i]===it.correct?' correct':' wrong';
+      return e('div',{key:i,className:'match-row'},
+        e('div',{className:'match-label'},it.label),
+        e('select',{className:cls,value:answers[i]||'',onChange:ev=>!checked&&setAnswers(a=>({...a,[i]:ev.target.value})),disabled:checked},
+          e('option',{value:''},'– Bitte wählen –'),
+          cats.slice(1).map((c,j)=>e('option',{key:j,value:String(j+1)},c))
+        )
+      );
+    }),
+    e('div',{className:'btn-row'},
+      !checked?e('button',{className:'btn btn-primary',onClick:check},'Prüfen'):null,
+      checked?e('button',{className:'btn btn-secondary',onClick:()=>setShowSol(!showSol)},showSol?'Lösung ausblenden':'Lösung anzeigen'):null,
+      checked?e('button',{className:'btn btn-reset',onClick:reset},'Zurücksetzen'):null
+    ),
+    checked?e('div',{style:{marginTop:12}},e('span',{className:'score-badge '+(items.filter((it,i)=>answers[i]===it.correct).length===items.length?'good':'bad')},items.filter((it,i)=>answers[i]===it.correct).length+'/'+items.length+' richtig')):null,
+    showSol?e('div',{className:'solution-box'},items.map((it,i)=>e('div',{key:i},it.label+' \u2192 '+cats[parseInt(it.correct)]))):null
+  );
+}
+
+// ─── Exercise 4 ──────────────────────────────────────────────────────────────
+
+function TextAnswerExercise({questions, exId, markDone}){
+  const [inputs, setInputs] = useState(Array(questions.length).fill(''));
+  const [checked, setChecked] = useState(false);
+  const [showSol, setShowSol] = useState(false);
+
+  function onChange(i,v){const n=[...inputs];n[i]=v;setInputs(n)}
+  function check(){
+    setChecked(true);
+    const correct = questions.filter((q,i)=>matchAnswer(inputs[i],q.answers)).length;
+    markDone(exId, Math.round(correct/questions.length*100));
+  }
+  function reset(){setInputs(Array(questions.length).fill(''));setChecked(false);setShowSol(false)}
+
+  return e('div',null,
+    e('div',{className:'ex-instruction'},'Welcher Begriff wird umschrieben? Geben Sie die Bezeichnung ein.'),
+    questions.map((q,i)=>{
+      let cls = 'text-input';
+      if(checked) cls += matchAnswer(inputs[i],q.answers)?' correct':' wrong';
+      return e('div',{key:i,className:'text-q'},
+        e('p',null, q.label+') '+q.text),
+        e('input',{className:cls,type:'text',value:inputs[i],onChange:ev=>onChange(i,ev.target.value),placeholder:'Ihre Antwort...',disabled:checked}),
+        checked && !matchAnswer(inputs[i],q.answers) ? e('div',{className:'feedback nok'},'Richtige Antwort: '+(typeof q.answers==='string'?q.answers:q.answers[0])) : null,
+        checked && matchAnswer(inputs[i],q.answers) ? e('div',{className:'feedback ok'},'Korrekt!') : null
+      );
+    }),
+    e('div',{className:'btn-row'},
+      !checked?e('button',{className:'btn btn-primary',onClick:check},'Prüfen'):null,
+      checked?e('button',{className:'btn btn-secondary',onClick:()=>setShowSol(!showSol)},showSol?'Lösung ausblenden':'Lösung anzeigen'):null,
+      checked?e('button',{className:'btn btn-reset',onClick:reset},'Zurücksetzen'):null
+    ),
+    checked?e('div',{style:{marginTop:12}},e('span',{className:'score-badge '+(questions.filter((q,i)=>matchAnswer(inputs[i],q.answers)).length===questions.length?'good':'bad')},questions.filter((q,i)=>matchAnswer(inputs[i],q.answers)).length+'/'+questions.length+' richtig')):null,
+    showSol?e('div',{className:'solution-box'},questions.map((q,i)=>e('div',{key:i},q.label+') '+(typeof q.answers==='string'?q.answers:q.answers[0])))):null
+  );
+}
+
+function Ex4({markDone}){
+  const questions = [
+    {label:'A',text:'(...) bildet den Verkehr des Unternehmens mit seinen Marktpartnern ab (Kunden, Lieferanten, Finanzpartnern). Dabei ist der Blick auf das Unternehmen als ein Gesamtes gerichtet.',answers:['Finanzbuchhaltung','FIBU']},
+    {label:'B',text:'Detaillierte Bestandsaufnahme der Ist-Bestände (aller Vermögens- und Schuldenposten) auf einen Stichtag hin und Kontrollunterlage mit den detailliert aufgeführten Posten.',answers:['Inventar']},
+    {label:'C',text:'Erfassung und Abrechnung aller mit dem Personal zusammenhängender Aufwendungen / Kosten, Abrechnung mit Sozialversicherungen.',answers:['Lohnbuchhaltung']},
+    {label:'D',text:'Sie zeigt die Herkunft und Verwendung der finanziellen Mittel auf und erklärt so die Entwicklung der «Liquidität» (Zunahme bzw. Abnahme). Man bezeichnet sie auch als «dritte Abschlussrechnung» (neben Bilanz und Erfolgsrechnung).',answers:['Geldflussrechnung','Mittelflussrechnung','Kapitalflussrechnung']},
+    {label:'E',text:'Hier geht es um eine Auswertung von Abschlussrechnungen (Bilanz, Erfolgsrechnung, gegebenenfalls Geldflussrechnung sowie weitere Datenquellen). Dabei wird mit Kennzahlen gearbeitet, d.h. mit Zahlen, die bestimmte Grössen zueinander in Beziehung setzen.',answers:['Bilanz- und Erfolgsanalyse','Bilanzanalyse','Bilanz und Erfolgsanalyse']},
+    {label:'F',text:'(...) dient in erster Linie der Führung des Unternehmens mit Zahlen. Es gibt keinerlei externe Vorgaben und es werden möglichst objektive Wertansätze mit entsprechendem Detaillierungsgrad gewählt.',answers:['Betriebsbuchhaltung','BEBU','Betriebsbuchaltung']}
+  ];
+  return e(TextAnswerExercise,{questions,exId:4,markDone});
+}
+
+// ─── Exercise 5 ──────────────────────────────────────────────────────────────
+
+function Ex5({markDone}){
+  const allAnswers = [
+    ['Gegenüberstellung','Gegenueberstellung'],['Vermögen','Vermoegen'],['Stichtag'],
+    ['Aktivseite'],['Vermögens','Vermoegens','Vermögen','Vermoegen'],
+    ['Umlaufvermögen','Umlaufvermoegen'],['Anlagevermögen','Anlagevermoegen'],['Passivseite'],['Fremdkapital'],['Eigenkapital'],
+    ['Passivseite'],['Kapitals','Kapital']
+  ];
+  const allDisplay = ['Gegenüberstellung','Vermögen','Stichtag','Aktivseite','Vermögens','Umlaufvermögen','Anlagevermögen','Passivseite','Fremdkapital','Eigenkapital','Passivseite','Kapitals'];
+
+  const templateA = 'Die Bilanz ist eine summarische ___(Gegenüberstellung)___ von ___(Vermögen)___, Fremd- und Eigenkapital, das an einem ___(Stichtag)___ im Unternehmen vorhanden ist.';
+  const templateB = 'Die ___(Aktivseite)___ zeigt die Zusammensetzung des ___(Vermögens)___ und wie das Kapital investiert wurde.';
+  const templateC = 'Die Bilanz wird auf der Aktivseite grob in ___(Umlaufvermögen)___ und ___(Anlagevermögen)___ gegliedert und auf der ___(Passivseite)___ in ___(Fremdkapital)___ und ___(Eigenkapital)___.';
+  const templateD = 'Die ___(Passivseite)___ zeigt die Zusammensetzung des ___(Kapitals)___ und wie das Vermögen finanziert wurde.';
+
+  const [inputs, setInputs] = useState(Array(12).fill(''));
+  const [checked, setChecked] = useState(false);
+  const [showSol, setShowSol] = useState(false);
+
+  function onChange(i,v){const n=[...inputs];n[i]=v;setInputs(n)}
+  function check(){
+    setChecked(true);
+    const correct = allAnswers.filter((a,i)=>matchAnswer(inputs[i],a)).length;
+    markDone(5, Math.round(correct/12*100));
+  }
+  function reset(){setInputs(Array(12).fill(''));setChecked(false);setShowSol(false)}
+
+  const partsA = parseBlanks(templateA);
+  const partsB = parseBlanks(templateB).map(p=>p.blankIndex!==undefined?{...p,blankIndex:p.blankIndex+3}:p);
+  const partsC = parseBlanks(templateC).map(p=>p.blankIndex!==undefined?{...p,blankIndex:p.blankIndex+5}:p);
+  const partsD = parseBlanks(templateD).map(p=>p.blankIndex!==undefined?{...p,blankIndex:p.blankIndex+10}:p);
+
+  return e('div',null,
+    e('div',{className:'ex-instruction'},'Ergänzen Sie die fehlenden Begriffe.'),
+    e('div',{className:'section-title'},'A)'),
+    e(LueckenText,{parts:partsA,answers:allAnswers,checked,inputs,onChange}),
+    e('div',{className:'section-title'},'B)'),
+    e(LueckenText,{parts:partsB,answers:allAnswers,checked,inputs,onChange}),
+    e('div',{className:'section-title'},'C)'),
+    e(LueckenText,{parts:partsC,answers:allAnswers,checked,inputs,onChange}),
+    e('div',{className:'section-title'},'D)'),
+    e(LueckenText,{parts:partsD,answers:allAnswers,checked,inputs,onChange}),
+    e('div',{className:'btn-row'},
+      !checked?e('button',{className:'btn btn-primary',onClick:check},'Prüfen'):null,
+      checked?e('button',{className:'btn btn-secondary',onClick:()=>setShowSol(!showSol)},showSol?'Lösung ausblenden':'Lösung anzeigen'):null,
+      checked?e('button',{className:'btn btn-reset',onClick:reset},'Zurücksetzen'):null
+    ),
+    checked?e('div',{style:{marginTop:12}},e('span',{className:'score-badge '+(allAnswers.filter((a,i)=>matchAnswer(inputs[i],a)).length===12?'good':'bad')},allAnswers.filter((a,i)=>matchAnswer(inputs[i],a)).length+'/12 richtig')):null,
+    showSol?e('div',{className:'solution-box'},e('strong',null,'Lösungen: '),allDisplay.join(', ')):null
+  );
+}
+
+// ─── Exercise 6 ──────────────────────────────────────────────────────────────
+
+function Ex6({markDone}){
+  const statements = [
+    {text:'Anlagevermögen und Eigenkapital zählen zum langfristigen Bereich.',correct:'R'},
+    {text:'Stets gilt: Eigenkapital = Aktiven – Fremdkapital.',correct:'R'},
+    {text:'Das Fremdkapital ist immer höher als das Eigenkapital.',correct:'F',reason:'Es gibt Unternehmen, bei denen das Eigenkapital höher ist als das Fremdkapital. Die Kapitalstruktur variiert je nach Branche und Unternehmen.'},
+    {text:'Das Nettoumlaufvermögen ist positiv, wenn die goldene Bilanzregel eingehalten wird.',correct:'R'},
+    {text:'Der Block Eigenkapital enthält rechtsformtypische Posten.',correct:'R'},
+    {text:'Zur Einhaltung der goldenen Bilanzregel muss das Eigenkapital mindestens so hoch sein wie das Anlagevermögen.',correct:'F',reason:'Die goldene Bilanzregel besagt, dass das langfristige Kapital (EK + langfr. FK) mindestens so hoch sein muss wie das Anlagevermögen, nicht nur das EK allein.'}
+  ];
+  return e(TrueFalseExercise,{statements,exId:6,markDone});
+}
+
+// ─── Exercise 7 ──────────────────────────────────────────────────────────────
+
+function Ex7({markDone}){
+  const rows = [
+    {labels:['Vermögen','Schulden','Reinvermögen/EK'], vals:[570,290,null], answer:280, ansIdx:2},
+    {labels:['Reinvermögen','Schulden','Vermögen'], vals:[100,320,null], answer:420, ansIdx:2},
+    {labels:['Eigenkapital','Fremdkapital','Vermögen'], vals:[200,750,null], answer:950, ansIdx:2},
+    {labels:['Vermögen','Fremdkapital','EK'], vals:[600,490,null], answer:110, ansIdx:2}
+  ];
+
+  const [inputs, setInputs] = useState(Array(4).fill(''));
+  const [checked, setChecked] = useState(false);
+  const [showSol, setShowSol] = useState(false);
+
+  function check(){
+    setChecked(true);
+    const correct = rows.filter((r,i)=>parseInt(inputs[i])===r.answer).length;
+    markDone(7, Math.round(correct/4*100));
+  }
+  function reset(){setInputs(Array(4).fill(''));setChecked(false);setShowSol(false)}
+
+  return e('div',null,
+    e('div',{className:'ex-instruction'},'Berechnen Sie die fehlende Grösse. Alle Beträge in CHF 1\'000.'),
+    e('table',{className:'check-table',style:{marginBottom:16}},
+      e('thead',null,e('tr',null,
+        e('th',null,''),e('th',null,'Grösse 1'),e('th',null,'Grösse 2'),e('th',null,'Fehlende Grösse')
+      )),
+      e('tbody',null,
+        rows.map((r,i)=>{
+          let cls = '';
+          if(checked) cls = parseInt(inputs[i])===r.answer?'correct-row':'wrong-row';
+          return e('tr',{key:i,className:cls},
+            e('td',null,'Zeile '+(i+1)),
+            e('td',null,r.labels[0]+': '+r.vals[0]),
+            e('td',null,r.labels[1]+': '+r.vals[1]),
+            e('td',null,
+              r.labels[2]+': ',
+              e('input',{
+                className:'calc-input'+(checked?(parseInt(inputs[i])===r.answer?' correct':' wrong'):''),
+                type:'number',value:inputs[i],
+                onChange:ev=>{const n=[...inputs];n[i]=ev.target.value;setInputs(n)},
+                disabled:checked
+              })
+            )
+          );
+        })
+      )
+    ),
+    e('div',{className:'btn-row'},
+      !checked?e('button',{className:'btn btn-primary',onClick:check},'Prüfen'):null,
+      checked?e('button',{className:'btn btn-secondary',onClick:()=>setShowSol(!showSol)},showSol?'Lösung ausblenden':'Lösung anzeigen'):null,
+      checked?e('button',{className:'btn btn-reset',onClick:reset},'Zurücksetzen'):null
+    ),
+    checked?e('div',{style:{marginTop:12}},e('span',{className:'score-badge '+(rows.filter((r,i)=>parseInt(inputs[i])===r.answer).length===4?'good':'bad')},rows.filter((r,i)=>parseInt(inputs[i])===r.answer).length+'/4 richtig')):null,
+    showSol?e('div',{className:'solution-box'},rows.map((r,i)=>e('div',{key:i},'Zeile '+(i+1)+': '+r.labels[2]+' = '+r.answer))):null
+  );
+}
+
+// ─── Exercise 8 ──────────────────────────────────────────────────────────────
+
+function Ex8({markDone}){
+  const items = [
+    {name:'Liquide Mittel',correct:'UV'},
+    {name:'Hypotheken',correct:'FK'},
+    {name:'Aktivdarlehen (Fälligkeit in 2 Jahren)',correct:'AV'},
+    {name:'Bankguthaben',correct:'UV'},
+    {name:'Kasse',correct:'UV'},
+    {name:'Aktienkapital',correct:'EK'},
+    {name:'Rohmaterial',correct:'UV'},
+    {name:'Forderungen aus Lieferungen und Leistungen',correct:'UV'},
+    {name:'Verbindlichkeiten aus Lieferungen und Leistungen',correct:'FK'},
+    {name:'Fahrzeuge',correct:'AV'},
+    {name:'Eigenkapital',correct:'EK'},
+    {name:'Büromaschinen und Informatik',correct:'AV'},
+    {name:'Mobiliar und Einrichtungen',correct:'AV'},
+    {name:'Darlehensschulden (Fälligkeit in 6 Monaten)',correct:'FK'},
+    {name:'Reserven',correct:'EK'},
+    {name:'Fertigfabrikatebestand',correct:'UV'},
+    {name:'Rückstellungen',correct:'FK'},
+    {name:'Immobilien',correct:'AV'},
+    {name:'Wertschriften',correct:'UV'},
+    {name:'Post',correct:'UV'},
+    {name:'Maschinen',correct:'AV'}
+  ];
+  const cats = ['UV','AV','FK','EK'];
+
+  const [answers, setAnswers] = useState({});
+  const [checked, setChecked] = useState(false);
+  const [showSol, setShowSol] = useState(false);
+
+  function toggle(i,cat){
+    if(checked) return;
+    setAnswers(a=>({...a,[i]:a[i]===cat?'':cat}));
+  }
+  function check(){
+    setChecked(true);
+    const correct = items.filter((it,i)=>answers[i]===it.correct).length;
+    markDone(8, Math.round(correct/items.length*100));
+  }
+  function reset(){setAnswers({});setChecked(false);setShowSol(false)}
+
+  return e('div',null,
+    e('div',{className:'ex-instruction'},'Ordnen Sie jede Position der richtigen Bilanzhauptgruppe zu (UV=Umlaufvermögen, AV=Anlagevermögen, FK=Fremdkapital, EK=Eigenkapital).'),
+    e('div',{style:{overflowX:'auto'}},
+      e('table',{className:'check-table'},
+        e('thead',null,e('tr',null,
+          e('th',null,'Position'),
+          cats.map(c=>e('th',{key:c},c))
+        )),
+        e('tbody',null,
+          items.map((it,i)=>{
+            let rowCls = '';
+            if(checked) rowCls = answers[i]===it.correct?'correct-row':'wrong-row';
+            return e('tr',{key:i,className:rowCls},
+              e('td',null,it.name),
+              cats.map(c=>e('td',{key:c},
+                e('input',{type:'radio',name:'ex8_'+i,checked:answers[i]===c,onChange:()=>toggle(i,c),disabled:checked})
+              ))
+            );
+          })
+        )
+      )
+    ),
+    e('div',{className:'btn-row'},
+      !checked?e('button',{className:'btn btn-primary',onClick:check},'Prüfen'):null,
+      checked?e('button',{className:'btn btn-secondary',onClick:()=>setShowSol(!showSol)},showSol?'Lösung ausblenden':'Lösung anzeigen'):null,
+      checked?e('button',{className:'btn btn-reset',onClick:reset},'Zurücksetzen'):null
+    ),
+    checked?e('div',{style:{marginTop:12}},e('span',{className:'score-badge '+(items.filter((it,i)=>answers[i]===it.correct).length===items.length?'good':'bad')},items.filter((it,i)=>answers[i]===it.correct).length+'/'+items.length+' richtig')):null,
+    showSol?e('div',{className:'solution-box'},items.map((it,i)=>e('div',{key:i},it.name+' \u2192 '+it.correct))):null
+  );
+}
+
+// ─── Exercise 9 ──────────────────────────────────────────────────────────────
+
+function Ex9({markDone}){
+  const terms = ['','Aktivdarlehen','Bank(guthaben)','Bank(schuld)','Fahrzeuge','Fertigfabrikate','Forderungen aus L+L','Halbfabrikate','Hypothek','Immobilien','Kasse','Maschinen','Mobiliar','Post','Rohmaterialvorrat','Verbindlichkeiten aus L+L','Warenbestand'];
+  const items = [
+    {text:'Bargeld in der Kasse (Banknoten und Münzen)',answer:'Kasse'},
+    {text:'Schuld auf einem Kontokorrentkonto bei einer Bank',answer:'Bank(schuld)'},
+    {text:'Bestand an Transportmitteln (PKW, LKW u.A.)',answer:'Fahrzeuge'},
+    {text:'Einrichtungsgegenstände im Laden oder Büro',answer:'Mobiliar'},
+    {text:'Zwischenprodukte (noch nicht fertiggestellte Produkte)',answer:'Halbfabrikate'},
+    {text:'Maschinen für die Erzeugung von Produkten',answer:'Maschinen'},
+    {text:'Liegenschaften, die zum Unternehmen gehören',answer:'Immobilien'},
+    {text:'Vorräte an Handelswaren, die zum Verkauf bestimmt sind',answer:'Warenbestand'},
+    {text:'Guthaben bei einer Bank (Kontokorrent)',answer:'Bank(guthaben)'},
+    {text:'Noch nicht bezahlte Rechnungen von Lieferanten',answer:'Verbindlichkeiten aus L+L'},
+    {text:'Rohstoffe, die für die Verarbeitung verwendet werden',answer:'Rohmaterialvorrat'},
+    {text:'Guthaben bei der Post',answer:'Post'},
+    {text:'Fertig erstellte Erzeugnisse zum Verkauf',answer:'Fertigfabrikate'},
+    {text:'An einen Dritten gewährtes Darlehen',answer:'Aktivdarlehen'},
+    {text:'Erhaltenes Darlehen gegen Verpfändung der Liegenschaft',answer:'Hypothek'},
+    {text:'Offene Rechnungen an Kunden',answer:'Forderungen aus L+L'}
+  ];
+
+  const [answers, setAnswers] = useState({});
+  const [checked, setChecked] = useState(false);
+  const [showSol, setShowSol] = useState(false);
+
+  function check(){
+    setChecked(true);
+    const correct = items.filter((it,i)=>answers[i]===it.answer).length;
+    markDone(9, Math.round(correct/items.length*100));
+  }
+  function reset(){setAnswers({});setChecked(false);setShowSol(false)}
+
+  return e('div',null,
+    e('div',{className:'ex-instruction'},'Wählen Sie den passenden buchhalterischen Begriff.'),
+    items.map((it,i)=>{
+      let cls = 'match-select';
+      if(checked) cls += answers[i]===it.answer?' correct':' wrong';
+      return e('div',{key:i,className:'match-row'},
+        e('div',{className:'match-label'},(i+1)+'. '+it.text),
+        e('select',{className:cls,value:answers[i]||'',onChange:ev=>!checked&&setAnswers(a=>({...a,[i]:ev.target.value})),disabled:checked},
+          e('option',{value:''},'– Bitte wählen –'),
+          terms.slice(1).map((t,j)=>e('option',{key:j,value:t},t))
+        )
+      );
+    }),
+    e('div',{className:'btn-row'},
+      !checked?e('button',{className:'btn btn-primary',onClick:check},'Prüfen'):null,
+      checked?e('button',{className:'btn btn-secondary',onClick:()=>setShowSol(!showSol)},showSol?'Lösung ausblenden':'Lösung anzeigen'):null,
+      checked?e('button',{className:'btn btn-reset',onClick:reset},'Zurücksetzen'):null
+    ),
+    checked?e('div',{style:{marginTop:12}},e('span',{className:'score-badge '+(items.filter((it,i)=>answers[i]===it.answer).length===items.length?'good':'bad')},items.filter((it,i)=>answers[i]===it.answer).length+'/'+items.length+' richtig')):null,
+    showSol?e('div',{className:'solution-box'},items.map((it,i)=>e('div',{key:i},(i+1)+'. '+it.answer))):null
+  );
+}
+
+// ─── Exercise 10 ─────────────────────────────────────────────────────────────
+
+function Ex10({markDone}){
+  const questions = [
+    {label:'A',text:'Guthaben gegenüber Kunden oder offene Kundenrechnungen.',answers:['Forderungen aus L+L','Forderungen','Debitoren','Forderungen aus Lieferungen und Leistungen']},
+    {label:'B',text:'Bezeichnung, die sowohl für die Summe der Aktiven als auch für die Summe der Passiven benutzt wird.',answers:['Bilanzsumme']},
+    {label:'C',text:'Schulden gegenüber Lieferanten oder offene Lieferantenrechnungen.',answers:['Verbindlichkeiten aus L+L','Verbindlichkeiten','Kreditoren','Verbindlichkeiten aus Lieferungen und Leistungen']},
+    {label:'D',text:'Meist kurzfristige Vermögensposten, die im operativen Kreislauf des Unternehmens gebunden sind.',answers:['Umlaufvermögen','Umlaufvermoegen']},
+    {label:'E',text:'Guthaben gegenüber der Post.',answers:['Post']},
+    {label:'F',text:'Zusammenfassung der Posten Kasse, Post, Bank (Vermögensposten, die als Zahlungsmittel eingesetzt werden können).',answers:['Flüssige Mittel','Fluessige Mittel','Liquide Mittel']},
+    {label:'G',text:'Vorrat an Erzeugnissen (fertiggestellten Produkten), den ein Fabrikationsbetrieb zum Verkauf bereitstellt.',answers:['Fertigfabrikate']},
+    {label:'H',text:'Bilanzseite, die aus Fremdkapital und Eigenkapital besteht.',answers:['Passiven','Passivseite']},
+    {label:'I',text:'Gegenüberstellung von Vermögen und Kapital eines Unternehmens zu einem Stichtag.',answers:['Bilanz']},
+    {label:'J',text:'Bilanzseite, die im Unternehmen vorhandene Vermögen nachweist.',answers:['Aktiven','Aktivseite']},
+    {label:'K',text:'Bewegliches Sachvermögen, das im Unternehmen als «Infrastruktur» längerfristig oder dauernd gebunden ist.',answers:['Anlagevermögen','Anlagevermoegen','Sachanlagen']}
+  ];
+  return e(TextAnswerExercise,{questions,exId:10,markDone});
+}
+
+// ─── Exercise 11 ─────────────────────────────────────────────────────────────
+
+function Ex11({markDone}){
+  const allItems = [
+    'Aktienkapital','Mobiliar und Büroeinrichtungen','Bankschuld','Produktionsanlagen',
+    'Darlehen (Darlehensschulden)','Reserven und Gewinnvortrag','Fertigfabrikate',
+    'Rohmaterial und Halbfabrikate','Flüssige Mittel','Verbindlichkeiten aus L+L','Forderungen aus L+L'
+  ];
+  const correctAktiven = ['Flüssige Mittel','Forderungen aus L+L','Rohmaterial und Halbfabrikate','Fertigfabrikate','Mobiliar und Büroeinrichtungen','Produktionsanlagen'];
+  const correctPassiven = ['Verbindlichkeiten aus L+L','Bankschuld','Darlehen (Darlehensschulden)','Aktienkapital','Reserven und Gewinnvortrag'];
+
+  const [assignments, setAssignments] = useState({});
+  const [branche, setBranche] = useState('');
+  const [rechtsform, setRechtsform] = useState('');
+  const [checked, setChecked] = useState(false);
+  const [showSol, setShowSol] = useState(false);
+
+  function assign(item, side){
+    if(checked) return;
+    setAssignments(a=>({...a,[item]:a[item]===side?'':side}));
+  }
+
+  function check(){
+    setChecked(true);
+    let score = 0;
+    let total = allItems.length + 2;
+    allItems.forEach(item=>{
+      const isAktiv = correctAktiven.includes(item);
+      if((isAktiv && assignments[item]==='A') || (!isAktiv && assignments[item]==='P')) score++;
+    });
+    if(matchAnswer(branche,['Produktionsbetrieb','Industrieunternehmen','Industrie','Produktionsunternehmen','Fabrikationsbetrieb'])) score++;
+    if(matchAnswer(rechtsform,['Aktiengesellschaft','AG','Aktiengesellschaft (AG)'])) score++;
+    markDone(11, Math.round(score/total*100));
+  }
+  function reset(){setAssignments({});setBranche('');setRechtsform('');setChecked(false);setShowSol(false)}
+
+  return e('div',null,
+    e('div',{className:'ex-instruction'},'Ordnen Sie die Positionen der Aktiv- oder Passivseite zu.'),
+    e('div',{style:{marginBottom:16}},
+      allItems.map(item=>{
+        const isAktiv = correctAktiven.includes(item);
+        const userAns = assignments[item];
+        let aCls = 'tf-btn', pCls = 'tf-btn';
+        if(!checked){
+          if(userAns==='A') aCls+=' selected';
+          if(userAns==='P') pCls+=' selected';
+        } else {
+          const correctSide = isAktiv?'A':'P';
+          if(correctSide==='A'){
+            aCls += userAns==='A'?' correct-sel':' correct-unsel';
+            if(userAns==='P') pCls += ' wrong-sel';
+          } else {
+            pCls += userAns==='P'?' correct-sel':' correct-unsel';
+            if(userAns==='A') aCls += ' wrong-sel';
+          }
+        }
+        return e('div',{key:item,className:'tf-row'},
+          e('div',{className:'tf-statement'},item),
+          e('div',{className:'tf-buttons'},
+            e('button',{className:aCls,onClick:()=>assign(item,'A'),disabled:checked},'Aktiven'),
+            e('button',{className:pCls,onClick:()=>assign(item,'P'),disabled:checked},'Passiven')
+          )
+        );
+      })
+    ),
+    e('div',{className:'sub-q'},
+      e('label',null,'B) Welcher Branche könnte das Unternehmen angehören?'),
+      e('input',{className:'text-input'+(checked?(matchAnswer(branche,['Produktionsbetrieb','Industrieunternehmen','Industrie','Produktionsunternehmen','Fabrikationsbetrieb'])?' correct':' wrong'):''),type:'text',value:branche,onChange:ev=>setBranche(ev.target.value),disabled:checked,placeholder:'Ihre Antwort...'})
+    ),
+    e('div',{className:'sub-q'},
+      e('label',null,'C) Welche Rechtsform hat das Unternehmen?'),
+      e('input',{className:'text-input'+(checked?(matchAnswer(rechtsform,['Aktiengesellschaft','AG','Aktiengesellschaft (AG)'])?' correct':' wrong'):''),type:'text',value:rechtsform,onChange:ev=>setRechtsform(ev.target.value),disabled:checked,placeholder:'Ihre Antwort...'})
+    ),
+    e('div',{className:'btn-row'},
+      !checked?e('button',{className:'btn btn-primary',onClick:check},'Prüfen'):null,
+      checked?e('button',{className:'btn btn-secondary',onClick:()=>setShowSol(!showSol)},showSol?'Lösung ausblenden':'Lösung anzeigen'):null,
+      checked?e('button',{className:'btn btn-reset',onClick:reset},'Zurücksetzen'):null
+    ),
+    showSol?e('div',{className:'solution-box'},
+      e('strong',null,'Aktiven: '),correctAktiven.join(', '),e('br'),
+      e('strong',null,'Passiven: '),correctPassiven.join(', '),e('br'),
+      e('strong',null,'Branche: '),'Produktionsbetrieb / Industrieunternehmen',e('br'),
+      e('strong',null,'Rechtsform: '),'Aktiengesellschaft (AG)'
+    ):null
+  );
+}
+
+// ─── Exercise 12 ─────────────────────────────────────────────────────────────
+
+function Ex12({markDone}){
+  const aktivenPre = [
+    {name:'Flüssige Mittel',val:null,answer:90},
+    {name:'Forderungen aus L+L',val:103,answer:null},
+    {name:'Übrige Forderungen',val:30,answer:null},
+    {name:'Vorräte',val:null,answer:77},
+    {name:'Finanzanlagen',val:null,answer:15},
+    {name:'Sachanlagen',val:null,answer:271},
+    {name:'Immaterielle Werte',val:39,answer:null}
+  ];
+  const passivenPre = [
+    {name:'Verbindlichkeiten aus L+L',val:96,answer:null},
+    {name:'Sonstige Verbindlichkeiten',val:45,answer:null},
+    {name:'Bankschulden',val:null,answer:25},
+    {name:'Darlehensschulden und Hypotheken',val:null,answer:125},
+    {name:'Aktienkapital',val:null,answer:220},
+    {name:'Reserven u. Gewinnvortrag',val:null,answer:114}
+  ];
+
+  const allInputs = [...aktivenPre,...passivenPre].filter(x=>x.answer!==null);
+  const [inputs, setInputs] = useState({});
+  const [checked, setChecked] = useState(false);
+  const [showSol, setShowSol] = useState(false);
+
+  function check(){
+    setChecked(true);
+    let correct = 0;
+    allInputs.forEach(it=>{
+      if(parseInt(inputs[it.name]||'')=== it.answer) correct++;
+    });
+    markDone(12, Math.round(correct/allInputs.length*100));
+  }
+  function reset(){setInputs({});setChecked(false);setShowSol(false)}
+
+  function renderSide(title, items){
+    const total = items.reduce((s,it)=> s + (it.val || it.answer || 0), 0);
+    return e('div',{className:'bilanz-side'},
+      e('h4',null,title),
+      items.map(it=>{
+        if(it.val!==null) return e('div',{key:it.name,className:'bilanz-item'},e('span',null,it.name),e('span',null,it.val));
+        let cls = 'calc-input';
+        if(checked) cls += parseInt(inputs[it.name]||'')===it.answer?' correct':' wrong';
+        return e('div',{key:it.name,className:'bilanz-item'},
+          e('span',null,it.name),
+          e('input',{className:cls,type:'number',value:inputs[it.name]||'',onChange:ev=>setInputs(p=>({...p,[it.name]:ev.target.value})),disabled:checked})
+        );
+      }),
+      e('div',{className:'bilanz-total'},e('span',null,'Total'),e('span',null,total))
+    );
+  }
+
+  return e('div',null,
+    e('div',{className:'ex-instruction'},'Ergänzen Sie die fehlenden Positionen in der Bilanz eines Unternehmens der Papierindustrie. Vorgegebene Posten: Flüssige Mittel 90, Vorräte 77, Finanzanlagen 15, Sachanlagen 271, Bankschulden 25, Darlehensschulden und Hypotheken 125, Aktienkapital 220, Reserven u. Gewinnvortrag 114.'),
+    e('div',{className:'bilanz-grid'},
+      renderSide('Aktiven', aktivenPre),
+      renderSide('Passiven', passivenPre)
+    ),
+    e('div',{className:'btn-row'},
+      !checked?e('button',{className:'btn btn-primary',onClick:check},'Prüfen'):null,
+      checked?e('button',{className:'btn btn-secondary',onClick:()=>setShowSol(!showSol)},showSol?'Lösung ausblenden':'Lösung anzeigen'):null,
+      checked?e('button',{className:'btn btn-reset',onClick:reset},'Zurücksetzen'):null
+    ),
+    checked?e('div',{style:{marginTop:12}},e('span',{className:'score-badge '+(allInputs.filter(it=>parseInt(inputs[it.name]||'')===it.answer).length===allInputs.length?'good':'bad')},allInputs.filter(it=>parseInt(inputs[it.name]||'')===it.answer).length+'/'+allInputs.length+' richtig')):null,
+    showSol?e('div',{className:'solution-box'},
+      e('strong',null,'Lösungen:'),e('br'),
+      allInputs.map(it=>e('div',{key:it.name},it.name+': '+it.answer))
+    ):null
+  );
+}
+
+// ─── Exercise 13 ─────────────────────────────────────────────────────────────
+
+function Ex13({markDone}){
+  // Part A
+  const [ekA, setEkA] = useState('');
+  const [brancheA, setBrancheA] = useState('');
+  const [rechtsformA, setRechtsformA] = useState('');
+  // Part B
+  const [bankB, setBankB] = useState('');
+  const [brancheB, setBrancheB] = useState('');
+  const [rechtsformB, setRechtsformB] = useState('');
+
+  const [checked, setChecked] = useState(false);
+  const [showSol, setShowSol] = useState(false);
+
+  function check(){
+    setChecked(true);
+    let score = 0;
+    if(parseInt(ekA)===160) score++;
+    if(matchAnswer(brancheA,['Detailhandel','Einzelhandel','Handel','Handelsunternehmen'])) score++;
+    if(matchAnswer(rechtsformA,['Einzelunternehmen','Einzelfirma'])) score++;
+    if(parseInt(bankB)===33) score++;
+    if(matchAnswer(brancheB,['Produktionsbetrieb','Industrie','Industrieunternehmen','Produktionsunternehmen','Fabrikationsbetrieb'])) score++;
+    if(matchAnswer(rechtsformB,['Aktiengesellschaft','AG','Aktiengesellschaft (AG)'])) score++;
+    markDone(13, Math.round(score/6*100));
+  }
+  function reset(){setEkA('');setBrancheA('');setRechtsformA('');setBankB('');setBrancheB('');setRechtsformB('');setChecked(false);setShowSol(false)}
+
+  const clsNum = (val, correct) => 'calc-input'+(checked?(parseInt(val)===correct?' correct':' wrong'):'');
+  const clsTxt = (val, answers) => 'text-input'+(checked?(matchAnswer(val,answers)?' correct':' wrong'):'');
+
+  return e('div',null,
+    e('div',{className:'ex-instruction'},'Erstellen Sie die Bilanzen und berechnen Sie die fehlende Position.'),
+
+    e('div',{className:'section-title'},'A) Bilanz 30.09.08'),
+    e('div',{className:'bilanz-grid'},
+      e('div',{className:'bilanz-side'},
+        e('h4',null,'Aktiven'),
+        ['Kasse 13','Post 7','Forderungen L+L 40','Waren 100','Mobiliar 50','Immobilien 400'].map(x=>e('div',{key:x,className:'bilanz-item'},e('span',null,x.split(/\s\d/)[0]),e('span',null,x.match(/\d+$/)[0]))),
+        e('div',{className:'bilanz-total'},e('span',null,'Total'),e('span',null,'610'))
+      ),
+      e('div',{className:'bilanz-side'},
+        e('h4',null,'Passiven'),
+        ['Verbindlichkeiten L+L 47','Bankschuld 43','Hypothek 360'].map(x=>e('div',{key:x,className:'bilanz-item'},e('span',null,x.split(/\s\d/)[0]),e('span',null,x.match(/\d+$/)[0]))),
+        e('div',{className:'bilanz-item'},
+          e('span',null,'Eigenkapital'),
+          e('input',{className:clsNum(ekA,160),type:'number',value:ekA,onChange:ev=>setEkA(ev.target.value),disabled:checked})
+        ),
+        e('div',{className:'bilanz-total'},e('span',null,'Total'),e('span',null,'610'))
+      )
+    ),
+    e('div',{className:'sub-q'},
+      e('label',null,'Branche?'),
+      e('input',{className:clsTxt(brancheA,['Detailhandel','Einzelhandel','Handel','Handelsunternehmen']),type:'text',value:brancheA,onChange:ev=>setBrancheA(ev.target.value),disabled:checked,placeholder:'Ihre Antwort...'})
+    ),
+    e('div',{className:'sub-q'},
+      e('label',null,'Rechtsform?'),
+      e('input',{className:clsTxt(rechtsformA,['Einzelunternehmen','Einzelfirma']),type:'text',value:rechtsformA,onChange:ev=>setRechtsformA(ev.target.value),disabled:checked,placeholder:'Ihre Antwort...'})
+    ),
+
+    e('div',{className:'section-title',style:{marginTop:24}},'B) Bilanz 31.12.07'),
+    e('div',{className:'bilanz-grid'},
+      e('div',{className:'bilanz-side'},
+        e('h4',null,'Aktiven'),
+        ['Kasse 3','Post 17','Forderungen L+L 35','Rohmaterial 30','Halb-/Fertigfabrikate 45','Fahrzeuge 10','Maschinen 140','Mobiliar 20','Immobilien 600'].map(x=>e('div',{key:x,className:'bilanz-item'},e('span',null,x.split(/\s\d/)[0]),e('span',null,x.match(/\d+$/)[0]))),
+        e('div',{className:'bilanz-total'},e('span',null,'Total'),e('span',null,'900'))
+      ),
+      e('div',{className:'bilanz-side'},
+        e('h4',null,'Passiven'),
+        ['Verbindlichkeiten L+L 37'].map(x=>e('div',{key:x,className:'bilanz-item'},e('span',null,x.split(/\s\d/)[0]),e('span',null,x.match(/\d+$/)[0]))),
+        e('div',{className:'bilanz-item'},
+          e('span',null,'Bankschuld'),
+          e('input',{className:clsNum(bankB,33),type:'number',value:bankB,onChange:ev=>setBankB(ev.target.value),disabled:checked})
+        ),
+        ['Darlehen 100','Hypotheken 400','Aktienkapital 200','Reserven 125','Gewinnvortrag 5'].map(x=>e('div',{key:x,className:'bilanz-item'},e('span',null,x.split(/\s\d/)[0]),e('span',null,x.match(/\d+$/)[0]))),
+        e('div',{className:'bilanz-total'},e('span',null,'Total'),e('span',null,'900'))
+      )
+    ),
+    e('div',{className:'sub-q'},
+      e('label',null,'Branche?'),
+      e('input',{className:clsTxt(brancheB,['Produktionsbetrieb','Industrie','Industrieunternehmen','Produktionsunternehmen','Fabrikationsbetrieb']),type:'text',value:brancheB,onChange:ev=>setBrancheB(ev.target.value),disabled:checked,placeholder:'Ihre Antwort...'})
+    ),
+    e('div',{className:'sub-q'},
+      e('label',null,'Rechtsform?'),
+      e('input',{className:clsTxt(rechtsformB,['Aktiengesellschaft','AG','Aktiengesellschaft (AG)']),type:'text',value:rechtsformB,onChange:ev=>setRechtsformB(ev.target.value),disabled:checked,placeholder:'Ihre Antwort...'})
+    ),
+
+    e('div',{className:'btn-row'},
+      !checked?e('button',{className:'btn btn-primary',onClick:check},'Prüfen'):null,
+      checked?e('button',{className:'btn btn-secondary',onClick:()=>setShowSol(!showSol)},showSol?'Lösung ausblenden':'Lösung anzeigen'):null,
+      checked?e('button',{className:'btn btn-reset',onClick:reset},'Zurücksetzen'):null
+    ),
+    showSol?e('div',{className:'solution-box'},
+      e('div',null,e('strong',null,'A) '),'Eigenkapital = 610 - 450 = 160, Branche: Detailhandel, Rechtsform: Einzelunternehmen'),
+      e('div',null,e('strong',null,'B) '),'Bankschuld = 900 - 867 = 33, Branche: Produktionsbetrieb, Rechtsform: Aktiengesellschaft (AG)')
+    ):null
+  );
+}
+
+// ─── Exercise 14 ─────────────────────────────────────────────────────────────
+
+function Ex14({markDone}){
+  const [reservenA, setReservenA] = useState('');
+  const [flMittelB, setFlMittelB] = useState('');
+  const [checked, setChecked] = useState(false);
+  const [showSol, setShowSol] = useState(false);
+
+  function check(){
+    setChecked(true);
+    let score = 0;
+    if(parseInt(reservenA)===372) score++;
+    if(parseInt(flMittelB)===15) score++;
+    markDone(14, Math.round(score/2*100));
+  }
+  function reset(){setReservenA('');setFlMittelB('');setChecked(false);setShowSol(false)}
+
+  const clsNum = (val, correct) => 'calc-input'+(checked?(parseInt(val)===correct?' correct':' wrong'):'');
+
+  return e('div',null,
+    e('div',{className:'ex-instruction'},'Erstellen Sie die Bilanzen und berechnen Sie die fehlende Position.'),
+
+    e('div',{className:'section-title'},'A) Mediengruppe – Bilanz 31.12.05'),
+    e('div',{style:{fontSize:'.8rem',color:'var(--text2)',marginBottom:8,fontStyle:'italic'}},'Hinweis: Vorauszahlungen von Kunden = kurzfristiges FK (Leistungsschuld)'),
+    e('div',{className:'bilanz-grid'},
+      e('div',{className:'bilanz-side'},
+        e('h4',null,'Aktiven'),
+        [['Flüssige Mittel',48],['Forderungen aus L+L',69],['Vorräte',13],['Finanzanlagen',200],['Immat. Anlagevermögen',7],['Immobilien',197],['Masch./Mob./Fahrzeuge',79]].map(x=>e('div',{key:x[0],className:'bilanz-item'},e('span',null,x[0]),e('span',null,x[1]))),
+        e('div',{className:'bilanz-total'},e('span',null,'Total'),e('span',null,'613'))
+      ),
+      e('div',{className:'bilanz-side'},
+        e('h4',null,'Passiven'),
+        [['Verbindlichkeiten aus L+L',70],['Vorauszahlungen von Kunden',35],['Langfristiges FK',57],['Aktienkapital',34],['Gewinnvortrag',45]].map(x=>e('div',{key:x[0],className:'bilanz-item'},e('span',null,x[0]),e('span',null,x[1]))),
+        e('div',{className:'bilanz-item'},
+          e('span',null,'Reserven'),
+          e('input',{className:clsNum(reservenA,372),type:'number',value:reservenA,onChange:ev=>setReservenA(ev.target.value),disabled:checked})
+        ),
+        e('div',{className:'bilanz-total'},e('span',null,'Total'),e('span',null,'613'))
+      )
+    ),
+
+    e('div',{className:'section-title',style:{marginTop:24}},'B) Treuhandbüro'),
+    e('div',{className:'bilanz-grid'},
+      e('div',{className:'bilanz-side'},
+        e('h4',null,'Aktiven'),
+        e('div',{className:'bilanz-item'},
+          e('span',null,'Flüssige Mittel'),
+          e('input',{className:clsNum(flMittelB,15),type:'number',value:flMittelB,onChange:ev=>setFlMittelB(ev.target.value),disabled:checked})
+        ),
+        [['Forderungen aus L+L',35],['Nicht fakt. Dienstleistungen',20],['Wertschriften',10],['Finanzanlagen',40],['Sachanlagen',65]].map(x=>e('div',{key:x[0],className:'bilanz-item'},e('span',null,x[0]),e('span',null,x[1]))),
+        e('div',{className:'bilanz-total'},e('span',null,'Total'),e('span',null,'185'))
+      ),
+      e('div',{className:'bilanz-side'},
+        e('h4',null,'Passiven'),
+        [['Verbindlichkeiten aus L+L',30],['Bankschuld',5],['Darlehen',25],['Eigenkapital',125]].map(x=>e('div',{key:x[0],className:'bilanz-item'},e('span',null,x[0]),e('span',null,x[1]))),
+        e('div',{className:'bilanz-total'},e('span',null,'Total'),e('span',null,'185'))
+      )
+    ),
+
+    e('div',{className:'btn-row'},
+      !checked?e('button',{className:'btn btn-primary',onClick:check},'Prüfen'):null,
+      checked?e('button',{className:'btn btn-secondary',onClick:()=>setShowSol(!showSol)},showSol?'Lösung ausblenden':'Lösung anzeigen'):null,
+      checked?e('button',{className:'btn btn-reset',onClick:reset},'Zurücksetzen'):null
+    ),
+    checked?e('div',{style:{marginTop:12}},e('span',{className:'score-badge '+([parseInt(reservenA)===372,parseInt(flMittelB)===15].filter(Boolean).length===2?'good':'bad')},[parseInt(reservenA)===372,parseInt(flMittelB)===15].filter(Boolean).length+'/2 richtig')):null,
+    showSol?e('div',{className:'solution-box'},
+      e('div',null,e('strong',null,'A) '),'Reserven = 613 - 70 - 35 - 57 - 34 - 45 = 372'),
+      e('div',null,e('strong',null,'B) '),'Flüssige Mittel = 185 - 35 - 20 - 10 - 40 - 65 = 15')
+    ):null
+  );
+}
+
+// ─── Mount ───────────────────────────────────────────────────────────────────
+
+const root = ReactDOM.createRoot(document.getElementById('root'));
+root.render(e(App));
+</script>
+</body>
+</html>
